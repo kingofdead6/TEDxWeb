@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id                String      @id @default(uuid())
+  picture           String?
+  title             String
+  description       String
+  checkins          Int         @default(0)
+  date              DateTime
+  location          String
+  theme             String
+  createdById       Int
+  createdBy         User        @relation("EventCreatedBy", fields: [createdById], references: [id])
+  responsibles      User[]      @relation("EventResponsibles")
+  speakers          Speaker[]   @relation("EventSpeakers")
+  partners          Partner[]   @relation("EventPartners")
+  gallery           String[]
+  watchTalks        String?
+  seats             Int?
+  isRegistrationOpen Boolean    @default(true)
+  attendees         Attendee[]  @relation("EventAttendees")
+  registrations     Registration[] @relation("EventRegistrations")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Attendee {
+  id                String      @id @default(uuid())
+  fullName          String
+  email             String      @unique
+  phoneNumber       String
+  dateOfBirth       DateTime
+  gender            String?
+  cityCountry       String
+  occupation        String
+  companyUniversity String
+  eventChoice       String
+  eventOther        String?
+  reasonToAttend    String?
+  attendedBefore    String?
+  previousEvents     String?
+  howHeard          String?
+  howHeardOther     String?
+  dietaryRestrictions String?
+  interests         String[]
+  interestsOther    String?
+  receiveUpdates    String?
+  events            Event[]     @relation("EventAttendees")
+  registrations     Registration[] @relation("AttendeeRegistrations")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Registration {
+  id                String      @id @default(uuid())
+  attendeeId        String
+  eventId           String
+  attendee          Attendee    @relation("AttendeeRegistrations", fields: [attendeeId], references: [id])
+  event             Event       @relation("EventRegistrations", fields: [eventId], references: [id])
+  registrationDate  DateTime    @default(now())
+  status            String      @default("pending")
+  validationTime    DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Partner {
+  id                String      @id @default(uuid())
+  pfp               String?
+  organizationName  String
+  contactPerson     String
+  contactEmail      String
+  contactPhone      String
+  websiteLinks      String
+  cityCountry       String
+  orgType           String
+  otherOrgType      String?
+  whyPartner        String
+  supportType       String[]
+  otherSupportType  String?
+  specificEvents     String
+  partnershipBenefits String
+  companyProfile    String?
+  additionalComments String?
+  isVisibleOnMainPage Boolean @default(false)
+  events            Event[]     @relation("EventPartners")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Speaker {
+  id                String      @id @default(uuid())
+  pfp               String?
+  fullName          String
+  email             String
+  phoneNumber       String
+  occupation        String
+  organization      String
+  cityCountry       String
+  linkedin          String?
+  instagram         String?
+  website           String?
+  talkTitle         String
+  talkSummary       String
+  talkImportance    String
+  priorTalk         String
+  priorTalkDetails  String?
+  speakerQualities  String
+  pastSpeeches      String?
+  additionalInfo    String?
+  isVisibleOnMainPage Boolean @default(false)
+  events            Event[]     @relation("EventSpeakers")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Volunteer {
+  id                   String      @id @default(uuid())
+  fullName             String
+  email                String
+  phoneNumber          String?
+  age                  String
+  cityCountry          String
+  linkedin             String?
+  commitment           String
+  priorExperience      String
+  priorExperienceDetails String?
+  roles                String[]
+  otherRole            String?
+  whyVolunteer         String
+  whatAdd              String
+  additionalComments    String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+model Press {
+  id                  String      @id @default(uuid())
+  fullName            String
+  email               String
+  phoneNumber         String?
+  mediaOutlet         String
+  position            String
+  otherPosition       String?
+  cityCountry         String
+  socialLinks         String?
+  coveragePlan        String
+  otherCoverage       String?
+  pastCoverage        String
+  pastCoverageLinks   String?
+  interest            String
+  specialRequirements String?
+  createdAt           DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Performer {
+  id                  String      @id @default(uuid())
+  pfp                 String?
+  fullName            String
+  email               String
+  phoneNumber         String?
+  team                String?
+  cityCountry         String
+  socialLinks         String?
+  performanceType     String
+  performanceTitle    String?
+  description         String
+  duration            String
+  specialEquipment    String?
+  sampleLink          String?
+  additionalComments  String?
+  createdAt           DateTime    @default(now()) 
+  updatedAt           DateTime    @updatedAt
+}
+
+model Contact {
+    id                  String      @id @default(uuid())
+    fullName            String
+    email               String
+    phoneNumber          String?
+    organization        String?
+    reason              String?
+    otherReason         String?
+    message             String
+    preferredContact    String
+    hearAboutUs         String
+    otherHear           String?
+    createdAt           DateTime    @default(now())
+    updatedAt           DateTime    @updatedAt
+}
+
+model User {
+  id            Int         @id @default(autoincrement())
+  name          String
+  email         String      @unique
+  phone         String?
+  password      String
+  role          String      @default("user")
+  team          String?
+  roleInTeam    String?
+  createdAt     DateTime    @default(now())
+  eventsCreated Event[]     @relation("EventCreatedBy")
+  eventsResponsible Event[] @relation("EventResponsibles")
+}
