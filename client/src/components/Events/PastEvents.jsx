@@ -144,24 +144,7 @@ const PastEvents = () => {
                   </div>
                 </motion.div>
               ))}
-              <div className="hidden md:flex justify-end">
-                <Link to="/events">
-                  <motion.button
-                    initial={{ boxShadow: "0 12px 30px rgba(244, 162, 97, 0.5)" }}
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: "0 24px 40px rgba(244, 162, 97, 0.6)",
-                      backgroundColor: "#F4A261",
-                      color: "white",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-1 rounded-full bg-white text-black border-2 border-[#F4A261] font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-[#F4A261] focus:ring-offset-2 cursor-pointer"
-                    aria-label="View our events"
-                  >
-                    More
-                  </motion.button>
-                </Link>
-              </div>
+         
             </div>
           </>
         )}

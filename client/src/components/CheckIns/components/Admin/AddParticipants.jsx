@@ -10,20 +10,19 @@ function AddParticipants() {
     fullName: '', email: '', phoneNumber: '', occupation: '', organization: '', cityCountry: '',
     linkedin: '', instagram: '', website: '', talkTitle: '', talkSummary: '', talkImportance: '',
     priorTalk: 'no', priorTalkDetails: '', speakerQualities: '', pastSpeeches: '', additionalInfo: '',
-    pfp: null, isVisibleOnMainPage: false,
+    pfp: null, isVisibleOnMainPage: false, addedByAdmin: false,
   });
   const [partnerData, setPartnerData] = useState({
     organizationName: '', contactPerson: '', contactEmail: '', contactPhone: '', websiteLinks: '',
     cityCountry: '', orgType: '', otherOrgType: '', whyPartner: '', supportType: [],
     otherSupportType: '', specificEvents: '', partnershipBenefits: '', companyProfile: null,
-    additionalComments: '', isVisibleOnMainPage: false,
+    additionalComments: '', isVisibleOnMainPage: false, addedByAdmin: false,
   });
-  const [volunteerData, setVolunteerData] = useState({
-    fullName: '', email: '', phoneNumber: '', age: '', cityCountry: '', linkedin: '',
-    commitment: '', priorExperience: 'no', priorExperienceDetails: '', roles: [],
-    otherRole: '', whyVolunteer: '', whatAdd: '', additionalComments: '',
+  const [teamMemberData, setTeamMemberData] = useState({
+    fullName: '', role: '', description: '', linkedin: '', instagram: '', youtube: '', website: '',
+    pfp: null, isVisibleOnMainPage: false,
   });
-  const [loading, setLoading] = useState({ speaker: false, partner: false, volunteer: false });
+  const [loading, setLoading] = useState({ speaker: false, partner: false, teamMember: false });
 
   const handleFileChange = (e, type, field) => {
     const file = e.target.files[0];
@@ -31,6 +30,8 @@ function AddParticipants() {
       setSpeakerData({ ...speakerData, [field]: file });
     } else if (type === 'partner') {
       setPartnerData({ ...partnerData, [field]: file });
+    } else if (type === 'teamMember') {
+      setTeamMemberData({ ...teamMemberData, [field]: file });
     }
   };
 
@@ -41,24 +42,24 @@ function AddParticipants() {
     let data, endpoint;
 
     if (type === 'speaker') {
-      data = speakerData;
+      data = { ...speakerData, addedByAdmin: true }; // Always set to true for speakers
       endpoint = '/speakers';
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'pfp' && value) {
           formData.append('pfp', value);
-        } else if (key === 'isVisibleOnMainPage') {
+        } else if (key === 'isVisibleOnMainPage' || key === 'addedByAdmin') {
           formData.append(key, value.toString());
         } else if (value !== null && value !== '') {
           formData.append(key, value);
         }
       });
     } else if (type === 'partner') {
-      data = { ...partnerData, supportType: JSON.stringify(partnerData.supportType) };
+      data = { ...partnerData, addedByAdmin: true }; // Always set to true for partners
       endpoint = '/partners';
       Object.entries(data).forEach(([key, value]) => {
         if (key === 'companyProfile' && value) {
           formData.append('companyProfile', value);
-        } else if (key === 'isVisibleOnMainPage') {
+        } else if (key === 'isVisibleOnMainPage' || key === 'addedByAdmin') {
           formData.append(key, value.toString());
         } else if (value !== null && value !== '' && key !== 'supportType') {
           formData.append(key, value);
@@ -67,11 +68,15 @@ function AddParticipants() {
       if (partnerData.supportType.length > 0) {
         formData.append('supportType', JSON.stringify(partnerData.supportType));
       }
-    } else if (type === 'volunteer') {
-      data = { ...volunteerData, roles: JSON.stringify(volunteerData.roles) };
-      endpoint = '/volunteers';
+    } else if (type === 'teamMember') {
+      data = teamMemberData;
+      endpoint = '/team-members';
       Object.entries(data).forEach(([key, value]) => {
-        if (value !== null && value !== '') {
+        if (key === 'pfp' && value) {
+          formData.append('pfp', value);
+        } else if (key === 'isVisibleOnMainPage') {
+          formData.append(key, value.toString());
+        } else if (value !== null && value !== '') {
           formData.append(key, value);
         }
       });
@@ -84,31 +89,27 @@ function AddParticipants() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1
-
-)} added successfully`, {
+      toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully`, {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
       });
-      // Reset form
       if (type === 'speaker') {
         setSpeakerData({
           fullName: '', email: '', phoneNumber: '', occupation: '', organization: '', cityCountry: '',
           linkedin: '', instagram: '', website: '', talkTitle: '', talkSummary: '', talkImportance: '',
           priorTalk: 'no', priorTalkDetails: '', speakerQualities: '', pastSpeeches: '', additionalInfo: '',
-          pfp: null, isVisibleOnMainPage: false,
+          pfp: null, isVisibleOnMainPage: false, addedByAdmin: true
         });
       } else if (type === 'partner') {
         setPartnerData({
           organizationName: '', contactPerson: '', contactEmail: '', contactPhone: '', websiteLinks: '',
           cityCountry: '', orgType: '', otherOrgType: '', whyPartner: '', supportType: [],
           otherSupportType: '', specificEvents: '', partnershipBenefits: '', companyProfile: null,
-          additionalComments: '', isVisibleOnMainPage: false,
+          additionalComments: '', isVisibleOnMainPage: false, addedByAdmin: true
         });
-      } else {
-        setVolunteerData({
-          fullName: '', email: '', phoneNumber: '', age: '', cityCountry: '', linkedin: '',
-          commitment: '', priorExperience: 'no', priorExperienceDetails: '', roles: [],
-          otherRole: '', whyVolunteer: '', whatAdd: '', additionalComments: '',
+      } else if (type === 'teamMember') {
+        setTeamMemberData({
+          fullName: '', role: '', description: '', linkedin: '', instagram: '', youtube: '', website: '',
+          pfp: null, isVisibleOnMainPage: false,
         });
       }
     } catch (err) {
@@ -120,36 +121,37 @@ function AddParticipants() {
     }
   };
 
-  const inputClass = 'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 bg-white hover:border-gray-400';
-  const textareaClass = 'w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 bg-white hover:border-gray-400 resize-vertical min-h-[100px]';
+  const inputClass = 'w-full p-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 bg-white hover:border-gray-400';
+  const textareaClass = 'w-full p-4 text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition duration-200 bg-white hover:border-gray-400 resize-vertical min-h-[120px]';
   const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
-  const buttonClass = 'px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 flex items-center justify-center cursor-pointer';
-  const fileInputClass = 'w-full p-3 border border-gray-300 rounded-lg bg-white hover:border-gray-400 text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-100 file:text-red-600 file:cursor-pointer file:hover:bg-red-200 transition duration-200';
+  const buttonClass = 'w-full sm:w-auto px-6 py-4 text-base bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 flex items-center justify-center cursor-pointer min-h-[48px]';
+  const fileInputClass = 'w-full p-4 text-base border border-gray-300 rounded-lg bg-white hover:border-gray-400 text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-red-100 file:text-red-600 file:cursor-pointer file:hover:bg-red-200 transition duration-200';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 pt-20 pb-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-gradient-to-b pt-16 pb-8 px-4">
       <Toaster />
       <motion.div
-        className="container mx-auto max-w-4xl bg-white rounded-2xl shadow-lg p-6 sm:p-8"
-        initial={{ opacity: 0, y: 30 }}
+        className="container mx-auto max-w-3xl bg-white rounded-2xl shadow-xl shadow-red-500 p-4 sm:p-6"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <h2 className="text-4xl font-extrabold text-red-600 mb-8 text-center">Add Participants</h2>
+        <p className="text-sm text-gray-500 mb-4 text-center">Date and Time: Saturday, June 14, 2025, 05:08 PM CET</p>
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-red-600 mb-6 text-center">Add People</h2>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-center gap-4 mb-8">
-          {['Speaker', 'Partner', 'Volunteer'].map((type) => (
+        <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
+          {['Speaker', 'Partner', 'Team Member'].map((type) => (
             <motion.button
               key={type}
-              onClick={() => setActiveForm(type.toLowerCase())}
-              className={`cursor-pointer px-6 py-3 rounded-lg font-semibold text-lg transition duration-200 ${
-                activeForm === type.toLowerCase()
+              onClick={() => setActiveForm(type.toLowerCase().replace(' ', ''))}
+              className={`w-full sm:w-auto cursor-pointer px-4 py-3 rounded-lg font-semibold text-base transition duration-200 ${
+                activeForm === type.toLowerCase().replace(' ', '')
                   ? 'bg-red-600 text-white shadow-md'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               aria-label={`Switch to ${type} form`}
             >
               Add {type}
@@ -163,13 +165,13 @@ function AddParticipants() {
             <motion.form
               key="speaker"
               onSubmit={(e) => handleSubmit(e, 'speaker')}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6">Add Speaker</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Add Speaker</h3>
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className={labelClass}>Full Name</label>
                   <input
@@ -274,7 +276,7 @@ function AddParticipants() {
                     aria-required="true"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Talk Summary</label>
                   <textarea
                     className={textareaClass}
@@ -284,7 +286,7 @@ function AddParticipants() {
                     aria-required="true"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Talk Importance</label>
                   <textarea
                     className={textareaClass}
@@ -308,7 +310,7 @@ function AddParticipants() {
                   </select>
                 </div>
                 {speakerData.priorTalk === 'yes' && (
-                  <div className="col-span-2">
+                  <div>
                     <label className={labelClass}>Prior Talk Details</label>
                     <textarea
                       className={textareaClass}
@@ -317,7 +319,7 @@ function AddParticipants() {
                     />
                   </div>
                 )}
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Speaker Qualities</label>
                   <textarea
                     className={textareaClass}
@@ -327,7 +329,7 @@ function AddParticipants() {
                     aria-required="true"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Past Speeches</label>
                   <textarea
                     className={textareaClass}
@@ -335,7 +337,7 @@ function AddParticipants() {
                     onChange={(e) => setSpeakerData({ ...speakerData, pastSpeeches: e.target.value })}
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Additional Info</label>
                   <textarea
                     className={textareaClass}
@@ -366,8 +368,8 @@ function AddParticipants() {
                 type="submit"
                 className={buttonClass}
                 disabled={loading.speaker}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
                 {loading.speaker ? (
                   <>
@@ -388,13 +390,13 @@ function AddParticipants() {
             <motion.form
               key="partner"
               onSubmit={(e) => handleSubmit(e, 'partner')}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6">Add Partner</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Add Partner</h3>
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className={labelClass}>Organization Name</label>
                   <input
@@ -481,7 +483,7 @@ function AddParticipants() {
                     onChange={(e) => setPartnerData({ ...partnerData, otherOrgType: e.target.value })}
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Why Partner</label>
                   <textarea
                     className={textareaClass}
@@ -491,9 +493,9 @@ function AddParticipants() {
                     aria-required="true"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Support Type</label>
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex flex-col gap-2">
                     {['Financial', 'In-Kind', 'Media', 'Other'].map((type) => (
                       <label key={type} className="flex items-center space-x-2">
                         <input
@@ -514,7 +516,7 @@ function AddParticipants() {
                   </div>
                 </div>
                 {partnerData.supportType.includes('Other') && (
-                  <div className="col-span-2">
+                  <div>
                     <label className={labelClass}>Other Support Type</label>
                     <input
                       type="text"
@@ -524,7 +526,7 @@ function AddParticipants() {
                     />
                   </div>
                 )}
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Specific Events</label>
                   <textarea
                     className={textareaClass}
@@ -534,7 +536,7 @@ function AddParticipants() {
                     aria-required="true"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Partnership Benefits</label>
                   <textarea
                     className={textareaClass}
@@ -562,7 +564,7 @@ function AddParticipants() {
                     className="h-5 w-5 text-red-600 rounded focus:ring-red-500 ml-2 accent-red-500 cursor-pointer"
                   />
                 </div>
-                <div className="col-span-2">
+                <div>
                   <label className={labelClass}>Additional Comments</label>
                   <textarea
                     className={textareaClass}
@@ -575,8 +577,8 @@ function AddParticipants() {
                 type="submit"
                 className={buttonClass}
                 disabled={loading.partner}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
                 {loading.partner ? (
                   <>
@@ -593,66 +595,45 @@ function AddParticipants() {
             </motion.form>
           )}
 
-          {activeForm === 'volunteer' && (
+          {activeForm === 'teammember' && (
             <motion.form
-              key="volunteer"
-              onSubmit={(e) => handleSubmit(e, 'volunteer')}
-              initial={{ opacity: 0, y: 20 }}
+              key="teamMember"
+              onSubmit={(e) => handleSubmit(e, 'teamMember')}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
             >
-              <h3 className="text-2xl font-semibold text-gray-800 mb-6">Add Volunteer</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Add Team Member</h3>
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className={labelClass}>Full Name</label>
                   <input
                     type="text"
                     className={inputClass}
-                    value={volunteerData.fullName}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, fullName: e.target.value })}
+                    value={teamMemberData.fullName}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, fullName: e.target.value })}
                     required
                     aria-required="true"
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Email</label>
+                  <label className={labelClass}>Role</label>
                   <input
-                    type="email"
+                    type="text"
                     className={inputClass}
-                    value={volunteerData.email}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, email: e.target.value })}
+                    value={teamMemberData.role}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, role: e.target.value })}
                     required
                     aria-required="true"
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Phone Number</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    value={volunteerData.phoneNumber}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, phoneNumber: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Age</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    value={volunteerData.age}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, age: e.target.value })}
-                    required
-                    aria-required="true"
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>City/Country</label>
-                  <input
-                    type="text"
-                    className={inputClass}
-                    value={volunteerData.cityCountry}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, cityCountry: e.target.value })}
+                  <label className={labelClass}>Description</label>
+                  <textarea
+                    className={textareaClass}
+                    value={teamMemberData.description}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, description: e.target.value })}
                     required
                     aria-required="true"
                   />
@@ -662,114 +643,64 @@ function AddParticipants() {
                   <input
                     type="url"
                     className={inputClass}
-                    value={volunteerData.linkedin}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, linkedin: e.target.value })}
+                    value={teamMemberData.linkedin}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, linkedin: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Commitment</label>
+                  <label className={labelClass}>Instagram</label>
                   <input
-                    type="text"
+                    type="url"
                     className={inputClass}
-                    value={volunteerData.commitment}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, commitment: e.target.value })}
-                    required
-                    aria-required="true"
+                    value={teamMemberData.instagram}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, instagram: e.target.value })}
                   />
                 </div>
                 <div>
-                  <label className={labelClass}>Prior Experience</label>
-                  <select
+                  <label className={labelClass}>YouTube</label>
+                  <input
+                    type="url"
                     className={inputClass}
-                    value={volunteerData.priorExperience}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, priorExperience: e.target.value })}
-                    required
-                    aria-required="true"
-                  >
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
-                {volunteerData.priorExperience === 'yes' && (
-                  <div className="col-span-2">
-                    <label className={labelClass}>Prior Experience Details</label>
-                    <textarea
-                      className={textareaClass}
-                      value={volunteerData.priorExperienceDetails}
-                      onChange={(e) => setVolunteerData({ ...volunteerData, priorExperienceDetails: e.target.value })}
-                    />
-                  </div>
-                )}
-                <div className="col-span-2">
-                  <label className={labelClass}>Roles</label>
-                  <div className="flex flex-wrap gap-4">
-                    {['Event Support', 'Logistics', 'Media', 'Other'].map((role) => (
-                      <label key={role} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          value={role}
-                          checked={volunteerData.roles.includes(role)}
-                          onChange={(e) => {
-                            const updated = e.target.checked
-                              ? [...volunteerData.roles, role]
-                              : volunteerData.roles.filter((r) => r !== role);
-                            setVolunteerData({ ...volunteerData, roles: updated });
-                          }}
-                          className="h-5 w-5 text-red-600 rounded focus:ring-red-500 accent-red-500 cursor-pointer"
-                        />
-                        <span className="text-gray-700">{role}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                {volunteerData.roles.includes('Other') && (
-                  <div className="col-span-2">
-                    <label className={labelClass}>Other Role</label>
-                    <input
-                      type="text"
-                      className={inputClass}
-                      value={volunteerData.otherRole}
-                      onChange={(e) => setVolunteerData({ ...volunteerData, otherRole: e.target.value })}
-                    />
-                  </div>
-                )}
-                <div className="col-span-2">
-                  <label className={labelClass}>Why Volunteer</label>
-                  <textarea
-                    className={textareaClass}
-                    value={volunteerData.whyVolunteer}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, whyVolunteer: e.target.value })}
-                    required
-                    aria-required="true"
+                    value={teamMemberData.youtube}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, youtube: e.target.value })}
                   />
                 </div>
-                <div className="col-span-2">
-                  <label className={labelClass}>What You Add</label>
-                  <textarea
-                    className={textareaClass}
-                    value={volunteerData.whatAdd}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, whatAdd: e.target.value })}
-                    required
-                    aria-required="true"
+                <div>
+                  <label className={labelClass}>Personal Website</label>
+                  <input
+                    type="url"
+                    className={inputClass}
+                    value={teamMemberData.website}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, website: e.target.value })}
                   />
                 </div>
-                <div className="col-span-2">
-                  <label className={labelClass}>Additional Comments</label>
-                  <textarea
-                    className={textareaClass}
-                    value={volunteerData.additionalComments}
-                    onChange={(e) => setVolunteerData({ ...volunteerData, additionalComments: e.target.value })}
+                <div>
+                  <label className={labelClass}>Profile Picture</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className={fileInputClass}
+                    onChange={(e) => handleFileChange(e, 'teamMember', 'pfp')}
+                  />
+                </div>
+                <div className="flex items-center">
+                  <label className={labelClass}>Show on Main Page</label>
+                  <input
+                    type="checkbox"
+                    checked={teamMemberData.isVisibleOnMainPage}
+                    onChange={(e) => setTeamMemberData({ ...teamMemberData, isVisibleOnMainPage: e.target.checked })}
+                    className="h-5 w-5 text-red-600 rounded focus:ring-red-500 ml-2 accent-red-500 cursor-pointer"
                   />
                 </div>
               </div>
               <motion.button
                 type="submit"
                 className={buttonClass}
-                disabled={loading.volunteer}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={loading.teamMember}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                {loading.volunteer ? (
+                {loading.teamMember ? (
                   <>
                     <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -778,7 +709,7 @@ function AddParticipants() {
                     Adding...
                   </>
                 ) : (
-                  'Add Volunteer'
+                  'Add Team Member'
                 )}
               </motion.button>
             </motion.form>

@@ -4,7 +4,7 @@ import RedX from "/RedX.png";
 
 const Hero = () => {
   const handleScroll = () => {
-    window.scrollBy({ top: 1000, behavior: "smooth" });
+    window.scrollBy({ top: 850, behavior: "smooth" });
   };
 
   return (
@@ -28,7 +28,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 text-center mt-8 relative z-20" dir="rtl">
+      <div className="container mx-auto px-4 text-center mt-14 relative z-20" dir="rtl">
         {/* Slogan */}
         <motion.p
           initial={{ y: 50, opacity: 0 }}

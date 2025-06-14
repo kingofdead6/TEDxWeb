@@ -249,6 +249,11 @@ export default function SpeakerNominationForm() {
                       required={formConfig.fields[fieldName].required}
                     />
                   )}
+                  {(fieldName === "talkSummary" || fieldName === "talkImportance" || fieldName === "speakerQualities") && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {countWords(formData[fieldName])}/{formConfig.fields[fieldName].maxWords} words
+                    </p>
+                  )}
                 </div>
               ))}
               <div className="mb-4">
@@ -295,6 +300,9 @@ export default function SpeakerNominationForm() {
                   placeholder={formConfig.fields.speakerQualities.label}
                   required
                 />
+                <p className="text-sm text-gray-600 mt-1">
+                  {countWords(formData.speakerQualities)}/200 words
+                </p>
               </div>
             </motion.div>
 

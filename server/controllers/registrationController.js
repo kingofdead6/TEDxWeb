@@ -5,16 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-// Configure nodemailer (replace with your SMTP credentials)
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Or your email service (e.g., SendGrid, AWS SES)
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // Your email
-    pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
-// Create a new attendee and registration
 export const createAttendeeAndRegistration = async (req, res) => {
   try {
     const {
@@ -110,7 +108,7 @@ export const createAttendeeAndRegistration = async (req, res) => {
     await prisma.$disconnect();
   }
 };
-// Existing createRegistration (unchanged)
+
 export const createRegistration = async (req, res) => {
   try {
     const { attendeeId, eventId, status } = req.body;
@@ -135,6 +133,7 @@ export const createRegistration = async (req, res) => {
 
     const registration = await prisma.registration.create({
       data: {
+        id: uuidv4(),
         attendeeId,
         eventId,
         status: status || 'pending',
@@ -145,9 +144,111 @@ export const createRegistration = async (req, res) => {
       },
     });
 
+    const qrData = JSON.stringify({
+      attendeeId: attendee.id,
+      fullName: attendee.fullName,
+      email: attendee.email,
+      eventId,
+      eventTitle: event.title,
+    });
+    const qrCodeBuffer = await QRCode.toBuffer(qrData, { type: 'png' });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: attendee.email,
+      subject: `TEDx Registration Confirmation for ${event.title}`,
+      html: `
+        <h1>Thank You for Registering for ${event.title}!</h1>
+        <p>Dear ${attendee.fullName},</p>
+        <p>Your registration for ${event.title} has been received. Please find your QR code attached, which you can use to validate your presence at the event.</p>
+        <p><strong>Event Details:</strong></p>
+        <ul>
+          <li>Event: ${event.title}</li>
+          <li>Date: ${new Date(event.date).toLocaleDateString('en-GB')}</li>
+          <li>Location: ${event.location}</li>
+        </ul>
+        <p>If you have any questions, contact us at <a href="mailto:contact@tedxalgeria.com">contact@tedxalgeria.com</a>.</p>
+        <p>We look forward to seeing you!</p>
+        <p>Best regards,<br>The TEDxAlgeria Team</p>
+      `,
+      attachments: [
+        { filename: 'registration-qr-code.png', content: qrCodeBuffer, contentType: 'image/png' },
+      ],
+    };
+
+    await transporter.sendMail(mailOptions);
+
     res.status(201).json({ message: 'Registration created successfully', registration });
   } catch (error) {
     console.error('Error creating registration:', error);
     res.status(500).json({ error: 'Server error' });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
+export const sendEmailsToSelected = async (req, res) => {
+  try {
+    const { registrationIds, eventId } = req.body;
+
+    if (!registrationIds || !Array.isArray(registrationIds) || registrationIds.length === 0 || !eventId) {
+      return res.status(400).json({ error: 'Registration IDs and event ID are required' });
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+    });
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const registrations = await prisma.registration.findMany({
+      where: { id: { in: registrationIds }, eventId },
+      include: { attendee: true },
+    });
+
+    for (const reg of registrations) {
+      const qrData = JSON.stringify({
+        attendeeId: reg.attendee.id,
+        fullName: reg.attendee.fullName,
+        email: reg.attendee.email,
+        eventId,
+        eventTitle: event.title,
+      });
+      const qrCodeBuffer = await QRCode.toBuffer(qrData, { type: 'png' });
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: reg.attendee.email,
+        subject: `TEDx Registration Confirmation for ${event.title}`,
+        html: `
+          <h1>Thank You for Registering for ${event.title}!</h1>
+          <p>Dear ${reg.attendee.fullName},</p>
+          <p>Your registration for ${event.title} has been received. Please find your QR code attached, which you can use to validate your presence at the event.</p>
+          <p><strong>Event Details:</strong></p>
+          <ul>
+            <li>Event: ${event.title}</li>
+            <li>Date: ${new Date(event.date).toLocaleDateString ('en-GB')}
+            </li>
+            <li>Location: ${event.location}</li>
+          </ul>
+          <p>If you have any questions, contact us at <a href="mailto:contact@tedxalgeria.com">contact@tedxalgeria.com</a>.</p>
+          <p>We look forward to seeing you!</p>
+          <p>Best regards,<br>The TEDxAlgeria Team</p>
+        `,
+        attachments: [
+          { filename: 'registration-qr-code.png', content: qrCodeBuffer, contentType: 'image/png' },
+        ],
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+
+    res.json({ message: `Emails sent to ${registrations.length} attendees` });
+  } catch (error) {
+    console.error('Error sending emails:', error);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    await prisma.$disconnect();
   }
 };

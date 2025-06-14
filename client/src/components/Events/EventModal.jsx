@@ -46,6 +46,14 @@ const EventModal = ({ event, isOpen, onClose }) => {
     dotsClass: "slick-dots custom-dots",
   };
 
+  // Check if registration is open
+  const isRegistrationOpen = (event) => {
+    const today = new Date();
+    const eventDate = new Date(event.date);
+    // Return false if the event date is in the past or registrations are explicitly closed
+    return event.isRegistrationOpen === true && eventDate >= today;
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -157,19 +165,19 @@ const EventModal = ({ event, isOpen, onClose }) => {
                     </motion.a>
                   </p>
                 )}
-                <p className="text-xl">
-                  <strong className="text-3xl font-semibold">Seats Available:</strong> {event.seats || "N/A"}
-                </p>
-                <Link to={`/events/${event.id}/register`}>
-                  <motion.button
-                    className="cursor-pointer mt-8 px-8 py-4 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-500/50 text-xl font-semibold shadow-lg"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    aria-label="Register for event"
-                  >
-                    Register Now
-                  </motion.button>
-                </Link>
+              
+                {isRegistrationOpen(event) && (
+                  <Link to={`/events/${event.id}/register`}>
+                    <motion.button
+                      className="cursor-pointer mt-8 px-8 py-4 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-500/50 text-xl font-semibold shadow-lg"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      aria-label="Register for event"
+                    >
+                      Register Now
+                    </motion.button>
+                  </Link>
+                )}
               </div>
               <div>
                 {event.gallery && event.gallery.length > 0 ? (

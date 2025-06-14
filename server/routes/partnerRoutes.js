@@ -1,8 +1,9 @@
 import express from 'express';
-import { createPartner, getPartners, deletePartner, getVisiblePartners, updatePartnerVisibility } from '../controllers/partnerController.js';
+import { createPartner, getPartners, deletePartner, getVisiblePartners, updatePartnerVisibility, exportPartners } from '../controllers/partnerController.js';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../utils/cloudinary.js';
+import { authMiddleware } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 
@@ -30,5 +31,7 @@ router.patch('/:id/visibility', updatePartnerVisibility);
 
 // DELETE: Delete a partner
 router.delete('/:id', deletePartner);
+
+router.post('/export', exportPartners);
 
 export default router;

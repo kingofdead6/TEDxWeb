@@ -15,6 +15,7 @@ import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import attendeeRoutes from './routes/attendeeRoutes.js';
+import TeamMemberRoutes from './routes/TeamMemberRoutes.js';
 
 dotenv.config();
 
@@ -41,7 +42,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/attendees', attendeeRoutes);
-
+app.use('/api/team-members', TeamMemberRoutes);
 // Basic route for testing
 app.get('/', (req, res) => {
   res.send('TEDx API is running');

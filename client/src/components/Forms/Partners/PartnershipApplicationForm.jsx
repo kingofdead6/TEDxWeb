@@ -76,12 +76,6 @@ export default function PartnershipApplicationForm() {
     setFormStatus({ message: "", type: "" });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prev) => ({ ...prev, companyProfile: file }));
-    setFormStatus({ message: "", type: "" });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -365,20 +359,7 @@ export default function PartnershipApplicationForm() {
 
             {/* Supporting Documents Section */}
             <motion.div variants={itemVariants}>
-              <h2 className="text-lg sm:text-xl font-semibold text-black mb-4">Supporting Documents (Optional)</h2>
-              <div className="mb-4">
-                <label htmlFor="companyProfile" className="block text-sm font-bold text-black mb-1">
-                  {formConfig.fields.companyProfile.label}
-                </label>
-                <input
-                  type="file"
-                  id="companyProfile"
-                  name="companyProfile"
-                  onChange={handleFileChange}
-                  className="w-full p-2 sm:p-3 border border-gray-300 rounded bg-white placeholder-[#8D8D8D] font-bold focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-transparent"
-                  accept=".pdf,.doc,.docx"
-                />
-              </div>
+             
               <div className="mb-4">
                 <label htmlFor="additionalComments" className="block text-sm font-bold text-black mb-1">
                   {formConfig.fields.additionalComments.label}

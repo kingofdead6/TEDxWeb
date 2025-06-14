@@ -27,7 +27,7 @@ function Navbar() {
         console.error('Navbar fetch user error:', err.response?.data);
         setUser(null);
         localStorage.removeItem('token');
-        navigate('checkins/login');
+        navigate('/');
       }
     };
     fetchUser();
@@ -64,7 +64,6 @@ function Navbar() {
     hover: {
       scale: 1.05,
       y: -2,
-      backgroundColor: '#e62b1e',
       color: '#ffffff',
       transition: { duration: 0.2, ease: 'easeInOut' },
     },
@@ -91,7 +90,7 @@ function Navbar() {
 
           {/* Hamburger Button */}
           <button
-            className="flex flex-col justify-center items-center w-8 h-8 space-y-1.5"
+            className="cursor-pointer flex flex-col justify-center items-center w-8 h-8 space-y-1.5"
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
           >
@@ -152,7 +151,7 @@ function Navbar() {
                       <motion.div variants={linkVariants} whileHover="hover">
                         <Link
                           to="/checkins/admin/events"
-                          className="block bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
+                          className="block bg-transparent border-2 border-[#e62b1e] hover:bg-[#e62b1e] rounded-xl px-4 py-2  hover:text-white transition-colors duration-200 text-center"
                           onClick={toggleSidebar}
                         >
                           Manage Events
@@ -191,7 +190,7 @@ function Navbar() {
                           className="block bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
                           onClick={toggleSidebar}
                         >
-                          Manage Participants
+                          Add People
                         </Link>
                       </motion.div>
                       <motion.div variants={linkVariants} whileHover="hover">
@@ -200,7 +199,7 @@ function Navbar() {
                           className="block bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
                           onClick={toggleSidebar}
                         >
-                          View Participants
+                          View People
                         </Link>
                       </motion.div>
                       <motion.div variants={linkVariants} whileHover="hover">
@@ -224,7 +223,7 @@ function Navbar() {
                       <motion.div variants={linkVariants} whileHover="hover">
                         <button
                           onClick={handleLogout}
-                          className="block w-full bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
+                          className="cursor-pointer block w-full bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
                         >
                           Logout
                         </button>
@@ -253,7 +252,7 @@ function Navbar() {
                       <motion.div variants={linkVariants} whileHover="hover">
                         <button
                           onClick={handleLogout}
-                          className="block w-full bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
+                          className="cursor-pointer block w-full bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
                         >
                           Logout
                         </button>

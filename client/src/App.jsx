@@ -25,14 +25,13 @@ import ProfilePage from "./components/CheckIns/pages/User/ProfilePage";
 import AdminEventsPage from "./components/CheckIns/pages/Admin/AdminEventsPage";
 import AdminUsersPage from "./components/CheckIns/pages/Admin/AdminUsersPage";
 import AdminStatisticsPage from "./components/CheckIns/pages/Admin/AdminStatisticsPage";
-import AddParticipants from "./components/CheckIns/components/Admin/AddParticipants";
-import ViewParticipants from "./components/CheckIns/components/Admin/ViewParticipants";
 import AdminAddParticipants from "./components/CheckIns/pages/Admin/AdminAddParticipants";
 import AdminViewParticipants from "./components/CheckIns/pages/Admin/AdminViewParticipants";
 import AdminViewContactMessages from "./components/CheckIns/pages/Admin/AdminViewContactMessages";
 import EventDetailsPage from "./components/Events/EventDetailsPage";
 import AdminAddEventPage from "./components/CheckIns/pages/Admin/AdminAddEventPage";
-import RegistrationsPage from "./components/CheckIns/components/Admin/RegistrationsPage";
+import AdminRegistraionPage from "./components/CheckIns/pages/Admin/AdminRegistraionPage";
+import QrScanPage from "./components/CheckIns/components/Admin/QrScanPage";
 
 // Layout component for routes with NavBar
 function MainLayout() {
@@ -81,7 +80,8 @@ function App() {
         <Route path="/checkins/admin/contacts" element={<AdminViewContactMessages />} />
         <Route path="/checkins/admin/events/add" element={<AdminAddEventPage />} />
         <Route path="/events/:id" element={<EventDetailsPage />} />
-        <Route path="/checkins/events/:eventId/registrations" element={<RegistrationsPage />} />
+        <Route path="/checkins/events/:eventId/registrations" element={<AdminRegistraionPage />} />
+        <Route path="/events/:eventId/scan" element={<QrScanPage />} />
       </Routes>
       <Footer />
     </Router>

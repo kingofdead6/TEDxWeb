@@ -1,8 +1,9 @@
 import express from 'express';
-import { createSpeaker, getSpeakers, deleteSpeaker, getVisibleSpeakers, updateSpeakerVisibility } from '../controllers/speakerController.js';
+import { createSpeaker, getSpeakers, deleteSpeaker, getVisibleSpeakers, updateSpeakerVisibility, exportSpeakers } from '../controllers/speakerController.js';
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../utils/cloudinary.js';
+import { authMiddleware } from '../utils/authMiddleware.js';
 
 const router = express.Router();
 
@@ -30,5 +31,8 @@ router.patch('/:id/visibility', updateSpeakerVisibility);
 
 // DELETE: Delete a speaker
 router.delete('/:id', deleteSpeaker);
+
+router.post('/export', exportSpeakers);
+
 
 export default router;

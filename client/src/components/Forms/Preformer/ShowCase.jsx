@@ -67,7 +67,7 @@ const ShowCase = () => {
         >
           As a performer, you will:
         </motion.h1>
-          <ul className="text-center space-y-3">
+          <ul className="text-left space-y-3">
             <li>✔ Gain exposure to a diverse and engaged audience</li>
             <li>✔ Be part of globally recognized events</li>
             <li>✔ Have your performance featured on our platforms</li>

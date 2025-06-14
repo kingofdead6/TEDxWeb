@@ -67,7 +67,7 @@ const MediaShowCase = () => {
         >
        As a media grantee, you’ll get:
         </motion.h1>
-          <ul className="text-center space-y-3">
+          <ul className="text-left space-y-3">
             <li>✔ Exclusive behind-the-scenes access to our events</li>
             <li>✔ Interviews with speakers, organizers, and attendees</li>
             <li>✔ High-quality content and visuals for your media outlet</li>

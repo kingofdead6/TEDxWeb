@@ -4,8 +4,9 @@ import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
-// Helper function to generate JWT token
+// Helper function to generate JWT token// In authController.js
 const generateToken = (user) => {
+  console.log('JWT_SECRET in generateToken:', process.env.JWT_SECRET || 'secret_key');
   return jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET || 'secret_key',

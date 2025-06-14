@@ -23,7 +23,7 @@ const BecomePartner = () => {
           transition={{ duration: 0.8, type: 'spring', stiffness: 50, damping: 10 }}
           className="text-6xl sm:text-9xl md:text-9xl font-bold"
         >
-          Interested in becoming a TEDx Partner?
+          Interested in becoming a Partner?
         </motion.h1>
         <motion.button
           initial={{ scale: 0.8, opacity: 0 }}

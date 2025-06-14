@@ -10,7 +10,7 @@ const OurPartnersCategories = () => {
     {
       id: 1,
       title: 'Strategic Partners',
-      description: 'Key organizations helping shape TEDxAlgeria\'s vision and expansion',
+      description: 'Key organizations helping shape our events\' vision and expansion',
       icon: brain,
     },
     {

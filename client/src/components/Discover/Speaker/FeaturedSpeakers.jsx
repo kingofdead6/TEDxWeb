@@ -3,27 +3,26 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { motion } from 'framer-motion';
-import { Instagram, Linkedin, Globe } from 'lucide-react'; // Icons for social media and website
+import { Instagram, Linkedin, Globe, X } from 'lucide-react';
 import axios from 'axios';
-import { API_BASE_URL } from '../../../../api'; // Adjust path to where your API base URL is defined
+import { API_BASE_URL } from '../../../../api';
 
 const FeaturedSpeakers = () => {
   const sliderRef = useRef(null);
   const [speakers, setSpeakers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedSpeaker, setSelectedSpeaker] = useState(null);
 
-  // Fetch visible speakers from the backend
   useEffect(() => {
     const fetchSpeakers = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/speakers/visible`, {
           headers: {
-            // Optional: Include Authorization header if required
             Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
           },
         });
-        console.log('Fetched speakers:', response.data); // Debug: Log API response
+        console.log('Fetched speakers:', response.data);
         setSpeakers(response.data);
         setLoading(false);
       } catch (err) {
@@ -45,7 +44,7 @@ const FeaturedSpeakers = () => {
     autoplay: true,
     autoplaySpeed: 0,
     cssEase: 'linear',
-    pauseOnHover: false, 
+    pauseOnHover: false,
     arrows: false,
     responsive: [
       {
@@ -70,8 +69,28 @@ const FeaturedSpeakers = () => {
     }
   };
 
+  const openModal = (speaker) => {
+    setSelectedSpeaker(speaker);
+  };
+
+  const closeModal = () => {
+    setSelectedSpeaker(null);
+  };
+
   return (
     <section className="relative py-20 overflow-hidden">
+      <style>
+        {`
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+          }
+        `}
+      </style>
+
       {/* Title */}
       <motion.h1
         initial={{ y: 50, opacity: 0 }}
@@ -111,14 +130,17 @@ const FeaturedSpeakers = () => {
           <Slider ref={sliderRef} {...settings}>
             {speakers.map((speaker) => (
               <div key={speaker.id} className="px-4 lg:px-6">
-                <div className="mx-auto flex flex-col items-center max-w-xs border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div
+                  className="mx-auto flex flex-col items-center max-w-xs border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+                  onClick={() => openModal(speaker)}
+                >
                   <div className="relative w-60 h-60 overflow-hidden rounded-lg">
                     <img
                       src={speaker.pfp || 'https://via.placeholder.com/240?text=Speaker'}
                       alt={speaker.fullName}
                       className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
                       onError={(e) => {
-                        console.warn(`Failed to load image for ${speaker.fullName}: ${speaker.pfp}`); // Debug: Log image errors
+                        console.warn(`Failed to load image for ${speaker.fullName}: ${speaker.pfp}`);
                         e.target.src = 'https://via.placeholder.com/240?text=Speaker';
                       }}
                     />
@@ -150,6 +172,125 @@ const FeaturedSpeakers = () => {
           </Slider>
         )}
       </div>
+
+      {/* Modal for Speaker Details */}
+      {selectedSpeaker && (
+        <div
+          className="fixed inset-0 bg-[#0000005d] backdrop-blur-md flex items-center justify-center z-50"
+          onClick={closeModal}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 my-8 max-h-[80vh] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeModal}
+              className="cursor-pointer absolute top-4 right-4 text-gray-600 hover:text-red-600"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="flex flex-col items-center overflow-y-auto no-scrollbar max-h-[70vh]">
+              <img
+                src={selectedSpeaker.pfp || 'https://via.placeholder.com/240?text=Speaker'}
+                alt={selectedSpeaker.fullName}
+                className="w-32 h-32 rounded-full object-cover mb-4"
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/240?text=Speaker';
+                }}
+              />
+              <h2 className="text-2xl font-bold text-black">{selectedSpeaker.fullName}</h2>
+              <p className="text-lg text-gray-600">{selectedSpeaker.occupation}</p>
+              <p className="text-md text-gray-500">{selectedSpeaker.organization}</p>
+              <p className="text-md text-gray-500 mb-4">{selectedSpeaker.cityCountry}</p>
+
+              {/* Contact Information */}
+              <div className="w-full mt-4">
+                <h3 className="text-lg font-semibold text-black">Contact Information</h3>
+                <p className="text-md text-gray-600">
+                  <span className="font-medium">Email:</span>{' '}
+                  {selectedSpeaker.email || 'Not provided'}
+                </p>
+                <p className="text-md text-gray-600">
+                  <span className="font-medium">Phone:</span>{' '}
+                  {selectedSpeaker.phoneNumber || 'Not provided'}
+                </p>
+                <div className="flex space-x-4 mt-2 justify-center">
+                  {selectedSpeaker.instagram && (
+                    <a href={selectedSpeaker.instagram} target="_blank" rel="noopener noreferrer">
+                      <Instagram className="w-6 h-6 text-gray-600 hover:text-red-600 transition-colors duration-200" />
+                    </a>
+                  )}
+                  {selectedSpeaker.linkedin && (
+                    <a href={selectedSpeaker.linkedin} target="_blank" rel="noopener noreferrer">
+                      <Linkedin className="w-6 h-6 text-gray-600 hover:text-blue-600 transition-colors duration-200" />
+                    </a>
+                  )}
+                  {selectedSpeaker.website && (
+                    <a href={selectedSpeaker.website} target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-6 h-6 text-gray-600 hover:text-green-600 transition-colors duration-200" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Talk Details */}
+              <div className="w-full mt-6">
+                <h3 className="text-lg font-semibold text-black">Talk Details</h3>
+                <p className="text-md text-gray-600">
+                  <span className="font-medium">Title:</span>{' '}
+                  {selectedSpeaker.talkTitle || 'Not provided'}
+                </p>
+                <p className="text-md text-gray-600 mt-2">
+                  <span className="font-medium">Summary:</span>{' '}
+                  {selectedSpeaker.talkSummary || 'Not provided'}
+                </p>
+                <p className="text-md text-gray-600 mt-2">
+                  <span className="font-medium">Importance:</span>{' '}
+                  {selectedSpeaker.talkImportance || 'Not provided'}
+                </p>
+              </div>
+
+              {/* Speaker Experience */}
+              <div className="w-full mt-6">
+                <h3 className="text-lg font-semibold text-black">Speaker Experience</h3>
+                <p className="text-md text-gray-600">
+                  <span className="font-medium">Prior Talk:</span>{' '}
+                  {selectedSpeaker.priorTalk || 'Not provided'}
+                </p>
+                {selectedSpeaker.priorTalkDetails && (
+                  <p className="text-md text-gray-600 mt-2">
+                    <span className="font-medium">Prior Talk Details:</span>{' '}
+                    {selectedSpeaker.priorTalkDetails}
+                  </p>
+                )}
+                <p className="text-md text-gray-600 mt-2">
+                  <span className="font-medium">Qualities:</span>{' '}
+                  {selectedSpeaker.speakerQualities || 'Not provided'}
+                </p>
+                {selectedSpeaker.pastSpeeches && (
+                  <p className="text-md text-gray-600 mt-2">
+                    <span className="font-medium">Past Speeches:</span>{' '}
+                    {selectedSpeaker.pastSpeeches}
+                  </p>
+                )}
+              </div>
+
+              {/* Additional Information */}
+              {selectedSpeaker.additionalInfo && (
+                <div className="w-full mt-6">
+                  <h3 className="text-lg font-semibold text-black">Additional Information</h3>
+                  <p className="text-md text-gray-600">
+                    {selectedSpeaker.additionalInfo}
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };

@@ -67,7 +67,7 @@ const SpeakersShowCase = () => {
           >
             Our ideal speakers:
           </motion.h1>
-          <ul className="text-center space-y-3">
+          <ul className="text-left space-y-3">
             <li>✔ Have a good, original or interesting idea or perspective worth sharing.</li>
             <li>✔ Can deliver an engaging and thought-provoking talk.</li>
             <li>✔ Are passionate about their topic and its impact on the world.</li>

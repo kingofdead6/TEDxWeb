@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { createVolunteer, getVolunteers, deleteVolunteer } from '../controllers/volunteerController.js';
+import { createVolunteer, getVolunteers, deleteVolunteer, exportVolunteers } from '../controllers/volunteerController.js';
 
 const router = express.Router();
 
@@ -15,5 +15,7 @@ router.get('/', getVolunteers);
 
 // DELETE: Delete a volunteer
 router.delete('/:id', deleteVolunteer);
+
+router.post('/export', exportVolunteers);
 
 export default router;

@@ -21,27 +21,60 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 function Statistics() {
-  const [stats, setStats] = useState({ totalUsers: 0, totalEvents: 0, eventStats: [] });
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalEvents: 0,
+    totalRegisteredUsers: 0,
+    eventStats: [],
+    genderStats: [],
+    howHeardStats: [],
+    ageStats: [],
+  });
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
   const modalRef = useRef(null);
+  const userModalRef = useRef(null);
 
+  // Fetch statistics and users
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL}/admin/statistics`, {
+        // Fetch statistics
+        const statsRes = await axios.get(`${API_BASE_URL}/admin/statistics`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        setStats(res.data);
-        setFilteredEvents(res.data.eventStats);
+        setStats(statsRes.data);
+        setFilteredEvents(statsRes.data.eventStats);
+        console.log('Fetched stats:', {
+          genderStats: statsRes.data.genderStats,
+          howHeardStats: statsRes.data.howHeardStats,
+          totalRegisteredUsers: statsRes.data.totalRegisteredUsers,
+        }); // Debug log
+
+        // Fetch users
+        const usersRes = await axios.get(`${API_BASE_URL}/admin/users`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setUsers(usersRes.data);
+        setFilteredUsers(usersRes.data);
+        console.log('Fetched users:', usersRes.data.slice(0, 3).map(u => ({
+          email: u.email,
+          attendee: u.attendee ? { gender: u.attendee.gender, howHeard: u.attendee.howHeard } : null,
+        }))); // Debug log
       } catch (err) {
-        setError('Failed to fetch statistics');
+        setError('Failed to fetch data');
+        console.error('Fetch error:', err); // Debug log
       }
     };
-    fetchStats();
+    fetchData();
   }, []);
 
   // Filter events based on search
@@ -51,6 +84,15 @@ function Statistics() {
     );
     setFilteredEvents(filtered);
   }, [searchTerm, stats.eventStats]);
+
+  // Filter users based on search
+  useEffect(() => {
+    const filtered = users.filter((user) =>
+      user.name.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(userSearchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  }, [userSearchTerm, users]);
 
   const openModal = (event) => {
     setSelectedEvent(event);
@@ -62,14 +104,29 @@ function Statistics() {
     setSelectedEvent(null);
   };
 
-  // Handle Escape key and click outside
+  const openUserModal = (user) => {
+    setSelectedUser(user);
+    setShowUserModal(true);
+    console.log('Opening user modal for:', {
+      email: user.email,
+      attendee: user.attendee ? { gender: user.attendee.gender, howHeard: user.attendee.howHeard } : null,
+    }); // Debug log
+  };
+
+  const closeUserModal = () => {
+    setShowUserModal(false);
+    setSelectedUser(null);
+  };
+
+  // Handle Escape key and click outside for modals
   const handleKeyDown = useCallback(
     (e) => {
-      if (e.key === 'Escape' && showModal) {
-        closeModal();
+      if (e.key === 'Escape') {
+        if (showUserModal) closeUserModal();
+        else if (showModal) closeModal();
       }
     },
-    [showModal]
+    [showModal, showUserModal]
   );
 
   useEffect(() => {
@@ -83,30 +140,36 @@ function Statistics() {
     }
   };
 
+  const handleUserClickOutside = (e) => {
+    if (userModalRef.current && !userModalRef.current.contains(e.target)) {
+      closeUserModal();
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
-    // Filtering handled by useEffect
+  };
+
+  const handleUserSearch = (e) => {
+    e.preventDefault();
   };
 
   const clearSearch = () => setSearchTerm('');
+  const clearUserSearch = () => setUserSearchTerm('');
 
-  // Circular Progress Bar Max Values
+  // Max values for circular progress bars
   const MAX_USERS = 1000;
   const MAX_EVENTS = 200;
+  const MAX_REGISTRATIONS = 5000;
 
-  // Bar Chart Data for All Events
+  // Bar chart for event registrations
   const barData = {
     labels: stats.eventStats.map((event) => event.title),
     datasets: [
       {
-        label: 'Total Attendees',
-        data: stats.eventStats.map((event) => event.totalAttendees),
+        label: 'Total Registrations',
+        data: stats.eventStats.map((event) => event.totalRegistrations),
         backgroundColor: '#e62b1e',
-      },
-      {
-        label: 'Registered Attendees',
-        data: stats.eventStats.map((event) => event.registeredAttendees),
-        backgroundColor: '#ff7b7b',
       },
     ],
   };
@@ -115,34 +178,93 @@ function Statistics() {
     responsive: true,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: 'Event Attendance Overview' },
+      title: { display: true, text: 'Event Registrations Overview' },
     },
     scales: {
-      y: { beginAtZero: true },
+      y: { beginAtZero: true, title: { display: true, text: 'Count' } },
     },
+  };
+
+  // Doughnut chart for gender distribution
+  const genderData = {
+    labels: stats.genderStats.map((stat) => stat.gender || 'Unspecified'),
+    datasets: [
+      {
+        data: stats.genderStats.map((stat) => stat.count),
+        backgroundColor: ['#e62b1e', '#ff7b7b', '#ffaaa5', '#ffd3b6'],
+        borderColor: ['white'],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const genderOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      title: { display: true, text: 'Gender Distribution' },
+    },
+  };
+
+  // Doughnut chart for registration sources
+  const howHeardData = {
+    labels: stats.howHeardStats.map((stat) => stat.source || 'Unspecified'),
+    datasets: [
+      {
+        data: stats.howHeardStats.map((stat) => stat.count),
+        backgroundColor: ['#e62b1e', '#ff7b7b', '#ffaaa5', '#ffd3b6', '#a8dadc'],
+        borderColor: ['white'],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const howHeardOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' },
+      title: { display: true, text: 'Registration Sources' },
+    },
+  };
+
+  // Bar chart for age distribution
+  const ageData = {
+    labels: stats.ageStats.map((stat) => stat.ageRange),
+    datasets: [
+      {
+        label: 'Attendees',
+        data: stats.ageStats.map((stat) => stat.count),
+        backgroundColor: '#e62b1e',
+      },
+    ],
+  };
+
+  const ageOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: 'Age Distribution' },
+    },
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: 'Count' } },
+    },
+  };
+
+  // Format functions
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString();
+  };
+
+  const formatArray = (arr) => {
+    if (!arr || arr.length === 0) return 'None';
+    return arr.join(', ');
   };
 
   // Event Statistics Modal
   function EventStatsModal({ event }) {
-    const doughnutData = {
-      labels: ['Registered Attendees', 'Non-Registered Attendees'],
-      datasets: [
-        {
-          data: [event.registeredAttendees, event.totalAttendees - event.registeredAttendees],
-          backgroundColor: ['#e62b1e', '#ff7b7b'],
-          borderColor: ['white', 'white'],
-          borderWidth: 2,
-        },
-      ],
-    };
-
-    const doughnutOptions = {
-      responsive: true,
-      plugins: {
-        legend: { position: 'bottom' },
-        title: { display: true, text: `${event.title} Attendees` },
-      },
-    };
+    const checkInPercentage =
+      event.totalRegistrations > 0 ? (event.checkedIn / event.totalRegistrations) * 100 : 0;
 
     return (
       <motion.div
@@ -170,13 +292,24 @@ function Statistics() {
           </h3>
           <div className="space-y-4">
             <p className="text-gray-700">
-              <strong>Total Attendees:</strong> {event.totalAttendees}
+              <strong>Total Registrations:</strong> {event.totalRegistrations}
             </p>
             <p className="text-gray-700">
-              <strong>Registered Attendees:</strong> {event.registeredAttendees}
+              <strong>Checked In:</strong> {event.checkedIn}
             </p>
-            <div className="w-full max-w-xs mx-auto">
-              <Doughnut data={doughnutData} options={doughnutOptions} />
+            <p className="text-gray-700">
+              <strong>Not Checked In:</strong> {event.notCheckedIn}
+            </p>
+            <div className="w-32 h-32 mx-auto">
+              <CircularProgressbar
+                value={checkInPercentage}
+                text={`${Math.round(checkInPercentage)}%`}
+                styles={buildStyles({
+                  pathColor: '#e62b1e',
+                  textColor: '#e62b1e',
+                  trailColor: '#ff7b7b',
+                })}
+              />
             </div>
           </div>
           <motion.button
@@ -186,6 +319,95 @@ function Statistics() {
             whileHover="hover"
             whileTap={{ scale: 0.95 }}
             aria-label="Close statistics modal"
+          >
+            Close
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    );
+  }
+
+  // User Details Modal
+  function UserDetailsModal({ user }) {
+    return (
+      <motion.div
+        className="fixed inset-0 bg-[#00000057] backdrop-blur-sm flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={handleUserClickOutside}
+        role="dialog"
+        aria-labelledby="user-modal-title"
+      >
+        <motion.div
+          ref={userModalRef}
+          className="w-full max-w-md sm:max-w-lg bg-white rounded-3xl border border-red-100 p-6 sm:p-8 max-h-[80vh] overflow-y-auto"
+          variants={modalVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3
+              id="user-modal-title"
+              className="text-xl sm:text-2xl font-bold text-[#e62b1e]"
+            >
+              User Details
+            </h3>
+            <button
+              onClick={closeUserModal}
+              className="text-gray-500 hover:text-gray-700"
+              aria-label="Close modal"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+          <div className="space-y-4 text-gray-700">
+            <h4 className="text-lg font-semibold">User Information</h4>
+            <p><strong>ID:</strong> {user.id}</p>
+            <p><strong>Name:</strong> {user.name || 'N/A'}</p>
+            <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+            <p><strong>Phone:</strong> {user.phone || 'N/A'}</p>
+            <p><strong>Team:</strong> {user.team || 'N/A'}</p>
+            <p><strong>Role in Team:</strong> {user.roleInTeam || 'N/A'}</p>
+            <p><strong>Role:</strong> {user.role || 'N/A'}</p>
+            <p><strong>Created At:</strong> {formatDate(user.createdAt)}</p>
+            {user.attendee ? (
+              <>
+                <h4 className="text-lg font-semibold mt-6">Attendee Information</h4>
+                <p><strong>Full Name:</strong> {user.attendee.fullName || 'N/A'}</p>
+                <p><strong>Email:</strong> {user.attendee.email || 'N/A'}</p>
+                <p><strong>Phone Number:</strong> {user.attendee.phoneNumber || 'N/A'}</p>
+                <p><strong>Gender:</strong> {user.attendee.gender || 'Not specified'}</p>
+                <p><strong>How Heard:</strong> {user.attendee.howHeard || 'Not specified'}</p>
+                <p><strong>Date of Birth:</strong> {formatDate(user.attendee.dateOfBirth)}</p>
+                <p><strong>City/Country:</strong> {user.attendee.cityCountry || 'N/A'}</p>
+                <p><strong>Occupation:</strong> {user.attendee.occupation || 'N/A'}</p>
+                <p><strong>Company/University:</strong> {user.attendee.companyUniversity || 'N/A'}</p>
+                <p><strong>Event Choice:</strong> {user.attendee.eventChoice || 'N/A'}</p>
+                <p><strong>Other Event:</strong> {user.attendee.eventOther || 'N/A'}</p>
+                <p><strong>Reason to Attend:</strong> {user.attendee.reasonToAttend || 'N/A'}</p>
+                <p><strong>Attended Before:</strong> {user.attendee.attendedBefore || 'N/A'}</p>
+                <p><strong>Previous Events:</strong> {user.attendee.previousEvents || 'N/A'}</p>
+                <p><strong>How Heard (Other):</strong> {user.attendee.howHeardOther || 'N/A'}</p>
+                <p><strong>Dietary Restrictions:</strong> {user.attendee.dietaryRestrictions || 'N/A'}</p>
+                <p><strong>Interests:</strong> {formatArray(user.attendee.interests)}</p>
+                <p><strong>Interests (Other):</strong> {user.attendee.interestsOther || 'N/A'}</p>
+                <p><strong>Receive Updates:</strong> {user.attendee.receiveUpdates || 'N/A'}</p>
+                <p><strong>Created At:</strong> {formatDate(user.attendee.createdAt)}</p>
+                <p><strong>Updated At:</strong> {formatDate(user.attendee.updatedAt)}</p>
+              </>
+            ) : (
+              <p className="text-gray-500 italic">No attendee information available for this user.</p>
+            )}
+          </div>
+          <motion.button
+            onClick={closeUserModal}
+            className="mt-6 w-full bg-[#e62b1e] text-white p-3 rounded-xl font-semibold hover:bg-[#c8241a] transition duration-300"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap={{ scale: 0.95 }}
+            aria-label="Close user details modal"
           >
             Close
           </motion.button>
@@ -223,7 +445,7 @@ function Statistics() {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6">
+    <div className="min-h-screen p-4 sm:p-6 mb-20 mt-10">
       <motion.div
         className="container mx-auto max-w-5xl bg-white bg-opacity-95 rounded-3xl border border-red-100 overflow-hidden"
         initial="initial"
@@ -255,7 +477,7 @@ function Statistics() {
 
           {/* Circular Progress Indicators */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8"
             variants={elementVariants}
           >
             <div className="flex flex-col items-center">
@@ -286,19 +508,56 @@ function Statistics() {
                 />
               </div>
             </div>
+            <div className="flex flex-col items-center">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Total Registrations</h3>
+              <div className="w-32 h-32">
+                <CircularProgressbar
+                  value={(stats.totalRegisteredUsers / MAX_REGISTRATIONS) * 100}
+                  text={`${stats.totalRegisteredUsers}`}
+                  styles={buildStyles({
+                    pathColor: '#e62b1e',
+                    textColor: '#e62b1e',
+                    trailColor: '#f3f4f6',
+                  })}
+                />
+              </div>
+            </div>
           </motion.div>
 
-          {/* Search Bar */}
+          {/* Demographic Charts */}
+          <motion.div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" variants={elementVariants}>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Gender Distribution</h3>
+              <div className="w-full max-w-xs mx-auto">
+                <Doughnut data={genderData} options={genderOptions} />
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Registration Sources</h3>
+              <div className="w-full max-w-xs mx-auto">
+                <Doughnut data={howHeardData} options={howHeardOptions} />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div className="mb-8" variants={elementVariants}>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Age Distribution</h3>
+            <div className="w-full max-w-3xl mx-auto">
+              <Bar data={ageData} options={ageOptions} />
+            </div>
+          </motion.div>
+
+          {/* Event Search Bar */}
           <motion.div className="mb-6" variants={elementVariants}>
             <form onSubmit={handleSearch} className="relative max-w-md mx-auto">
-              <label htmlFor="search" className="sr-only">
+              <label htmlFor="event-search" className="sr-only">
                 Search events
               </label>
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <FiSearch className="text-gray-400" />
               </div>
               <input
-                id="search"
+                id="event-search"
                 type="text"
                 placeholder="Search by event name..."
                 className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ff7b7b] focus:border-[#ff7b7b] transition duration-300 text-sm sm:text-base"
@@ -311,7 +570,7 @@ function Statistics() {
                   type="button"
                   onClick={clearSearch}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  aria-label="Clear search"
+                  aria-label="Clear event search"
                 >
                   <FiX className="text-gray-400 hover:text-gray-600" />
                 </button>
@@ -319,9 +578,9 @@ function Statistics() {
             </form>
           </motion.div>
 
-          {/* Bar Chart for All Events */}
+          {/* Event Registrations Bar Chart */}
           <motion.div className="mb-8" variants={elementVariants}>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Event Attendance Overview</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4">Event Registrations Overview</h3>
             <div className="w-full max-w-3xl mx-auto">
               <Bar data={barData} options={barOptions} />
             </div>
@@ -329,7 +588,7 @@ function Statistics() {
 
           {/* Event Statistics List */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8"
             variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
             initial="hidden"
             animate="visible"
@@ -337,7 +596,7 @@ function Statistics() {
             <AnimatePresence>
               {filteredEvents.map((event) => (
                 <motion.div
-                  key={event._id}
+                  key={event.id}
                   className="p-4 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 cursor-pointer"
                   variants={elementVariants}
                   initial="hidden"
@@ -356,11 +615,9 @@ function Statistics() {
                   <div className="absolute top-0 left-0 w-full h-2 bg-[#e62b1e]"></div>
                   <h4 className="text-lg font-bold text-gray-800 mb-2">{event.title}</h4>
                   <p className="text-gray-600 text-sm">
-                    Total Attendees: {event.totalAttendees}
+                    Total Registrations: {event.totalRegistrations}
                   </p>
-                  <p className="text-gray-600 text-sm">
-                    Registered Attendees: {event.registeredAttendees}
-                  </p>
+                  <p className="text-gray-600 text-sm">Checked In: {event.checkedIn}</p>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -394,14 +651,18 @@ function Statistics() {
               </p>
             </motion.div>
           )}
+
         </div>
       </motion.div>
 
       {/* Event Statistics Modal */}
       <AnimatePresence>
-        {showModal && selectedEvent && (
-          <EventStatsModal event={selectedEvent} />
-        )}
+        {showModal && selectedEvent && <EventStatsModal event={selectedEvent} />}
+      </AnimatePresence>
+
+      {/* User Details Modal */}
+      <AnimatePresence>
+        {showUserModal && selectedUser && <UserDetailsModal user={selectedUser} />}
       </AnimatePresence>
     </div>
   );

@@ -67,7 +67,7 @@ const VolunteerShowCase = () => {
         >
           As a volunteer, you will:
         </motion.h1>
-          <ul className="text-center space-y-3">
+          <ul className="text-left space-y-3">
             <li>✔ Gain hands-on experience in event management, logistics, and coordination</li>
             <li>✔ Connect with inspiring speakers, organizers, and fellow volunteers</li>
             <li>✔ Contribute to bringing transformative ideas to life</li>

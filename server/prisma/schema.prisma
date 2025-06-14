@@ -67,6 +67,8 @@ model Registration {
   registrationDate  DateTime    @default(now())
   status            String      @default("pending")
   validationTime    DateTime?
+  checkedIn         Boolean     @default(false)
+  checkInToken      String?     @unique
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 }
@@ -89,6 +91,7 @@ model Partner {
   partnershipBenefits String
   companyProfile    String?
   additionalComments String?
+  addedByAdmin Boolean @default(false)
   isVisibleOnMainPage Boolean @default(false)
   events            Event[]     @relation("EventPartners")
   createdAt         DateTime    @default(now())
@@ -115,6 +118,7 @@ model Speaker {
   speakerQualities  String
   pastSpeeches      String?
   additionalInfo    String?
+  addedByAdmin Boolean @default(false)
   isVisibleOnMainPage Boolean @default(false)
   events            Event[]     @relation("EventSpeakers")
   createdAt         DateTime    @default(now())
@@ -158,7 +162,7 @@ model Press {
   interest            String
   specialRequirements String?
   createdAt           DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  updatedAt           DateTime    @updatedAt
 }
 
 model Performer {
@@ -177,7 +181,7 @@ model Performer {
   specialEquipment    String?
   sampleLink          String?
   additionalComments  String?
-  createdAt           DateTime    @default(now()) 
+  createdAt           DateTime    @default(now())
   updatedAt           DateTime    @updatedAt
 }
 
@@ -209,4 +213,19 @@ model User {
   createdAt     DateTime    @default(now())
   eventsCreated Event[]     @relation("EventCreatedBy")
   eventsResponsible Event[] @relation("EventResponsibles")
+}
+
+model TeamMember {
+  id                 String   @id @default(uuid())
+  fullName           String
+  role               String
+  description        String
+  linkedin           String?
+  instagram          String?
+  youtube            String?
+  website            String?
+  pfp                String?
+  isVisibleOnMainPage Boolean @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }

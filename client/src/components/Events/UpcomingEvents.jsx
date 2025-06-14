@@ -23,8 +23,12 @@ const UpcomingEvents = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         // Filter upcoming events (date >= today)
-        const upcomingEvents = response.data.filter(
+        let upcomingEvents = response.data.filter(
           (event) => new Date(event.date) >= today
+        );
+        // Sort events by closest date
+        upcomingEvents = upcomingEvents.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
         );
         setEvents(upcomingEvents);
         setLoading(false);
@@ -51,6 +55,11 @@ const UpcomingEvents = () => {
 
   const closeModal = () => {
     setSelectedEvent(null);
+  };
+
+  // Check if registration is open
+  const isRegistrationOpen = (event) => {
+    return event.isRegistrationOpen === true;
   };
 
   return (
@@ -104,7 +113,7 @@ const UpcomingEvents = () => {
             transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10 }}
             className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-black mb-6 leading-tight"
           >
-            Discover what’s next on the TEDxAlgeria journey
+            Discover what’s next on the journey
           </motion.h2>
           <motion.p
             initial={{ y: 50, opacity: 0 }}
@@ -112,7 +121,7 @@ const UpcomingEvents = () => {
             transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 50, damping: 10 }}
             className="text-base sm:text-lg md:text-xl font-medium text-black max-w-full md:max-w-lg"
           >
-            Discover the next TEDxAlgeria experiences. New ideas, powerful voices, and inspiring moments are on the way. Don’t miss what’s coming next.
+            Discover the next experiences. New ideas, powerful voices, and inspiring moments are on the way. Don’t miss what’s coming next.
           </motion.p>
         </div>
 
@@ -170,15 +179,17 @@ const UpcomingEvents = () => {
                       </div>
                     </div>
                   </div>
-                  <Link to={`/events/${event.id}/register`}>
-                    <motion.button
-                      className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Register Now
-                    </motion.button>
-                  </Link>
+                  {isRegistrationOpen(event) && (
+                    <Link to={`/events/${event.id}/register`}>
+                      <motion.button
+                        className="cursor-pointer mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Register Now
+                      </motion.button>
+                    </Link>
+                  )}
                 </motion.div>
               ))
             )}

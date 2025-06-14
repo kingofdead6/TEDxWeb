@@ -1,17 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 import cloudinary from '../utils/cloudinary.js';
+import ExcelJS from 'exceljs';
 
 const prisma = new PrismaClient();
 
-// Create a new speaker
+
 export const createSpeaker = async (req, res) => {
   try {
+    const formData = req.body; 
+
     const {
       fullName, email, phoneNumber, occupation, organization, cityCountry,
       linkedin, instagram, website, talkTitle, talkSummary, talkImportance,
       priorTalk, priorTalkDetails, speakerQualities, pastSpeeches, additionalInfo,
-      isVisibleOnMainPage
-    } = req.body;
+      isVisibleOnMainPage, addedByAdmin
+    } = formData;
 
     // Basic validation
     if (!fullName || !email || !phoneNumber || !occupation || !organization || !cityCountry || !talkTitle || !talkSummary || !talkImportance || !priorTalk || !speakerQualities) {
@@ -49,6 +52,7 @@ export const createSpeaker = async (req, res) => {
         additionalInfo,
         pfp: pfpUrl,
         isVisibleOnMainPage: isVisibleOnMainPage === 'true',
+        addedByAdmin: addedByAdmin === 'true',
       },
     });
 
@@ -126,5 +130,75 @@ export const deleteSpeaker = async (req, res) => {
   } catch (error) {
     console.error('Error deleting speaker:', error);
     res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const exportSpeakers = async (req, res) => {
+  try {
+    const speakers = req.body || [];
+
+    if (!speakers.length) {
+      return res.status(400).json({ error: 'No speaker data provided' });
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Speakers');
+
+    worksheet.columns = [
+      { header: 'Full Name', key: 'fullName', width: 20 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone Number', key: 'phoneNumber', width: 15 },
+      { header: 'Occupation', key: 'occupation', width: 20 },
+      { header: 'Organization', key: 'organization', width: 25 },
+      { header: 'City/Country', key: 'cityCountry', width: 20 },
+      { header: 'LinkedIn', key: 'linkedin', width: 30 },
+      { header: 'Instagram', key: 'instagram', width: 30 },
+      { header: 'Website', key: 'website', width: 30 },
+      { header: 'Talk Title', key: 'talkTitle', width: 30 },
+      { header: 'Talk Summary', key: 'talkSummary', width: 40 },
+      { header: 'Talk Importance', key: 'talkImportance', width: 40 },
+      { header: 'Prior Talk', key: 'priorTalk', width: 20 },
+      { header: 'Prior Talk Details', key: 'priorTalkDetails', width: 40 },
+      { header: 'Speaker Qualities', key: 'speakerQualities', width: 40 },
+      { header: 'Past Speeches', key: 'pastSpeeches', width: 40 },
+      { header: 'Profile Picture', key: 'pfp', width: 30 },
+      { header: 'Additional Info', key: 'additionalInfo', width: 40 },
+      { header: 'Visible on Main Page', key: 'isVisibleOnMainPage', width: 20 },
+      { header: 'Added by Admin', key: 'addedByAdmin', width: 15 },
+    ];
+
+    speakers.forEach((speaker) => {
+      worksheet.addRow({
+        fullName: speaker.fullName || 'N/A',
+        email: speaker.email || 'N/A',
+        phoneNumber: speaker.phoneNumber || 'N/A',
+        occupation: speaker.occupation || 'N/A',
+        organization: speaker.organization || 'N/A',
+        cityCountry: speaker.cityCountry || 'N/A',
+        linkedin: speaker.linkedin || 'N/A',
+        instagram: speaker.instagram || 'N/A',
+        website: speaker.website || 'N/A',
+        talkTitle: speaker.talkTitle || 'N/A',
+        talkSummary: speaker.talkSummary || 'N/A',
+        talkImportance: speaker.talkImportance || 'N/A',
+        priorTalk: speaker.priorTalk || 'N/A',
+        priorTalkDetails: speaker.priorTalkDetails || 'N/A',
+        speakerQualities: speaker.speakerQualities || 'N/A',
+        pastSpeeches: speaker.pastSpeeches || 'N/A',
+        pfp: speaker.pfp || 'N/A',
+        additionalInfo: speaker.additionalInfo || 'N/A',
+        isVisibleOnMainPage: speaker.isVisibleOnMainPage ? 'Yes' : 'No',
+        addedByAdmin: speaker.addedByAdmin ? 'Yes' : 'No',
+      });
+    });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=speakers.xlsx');
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('Export speakers error:', error);
+    res.status(500).json({ error: 'Failed to export speakers', details: error.message });
   }
 };
