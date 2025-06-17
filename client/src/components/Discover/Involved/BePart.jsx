@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const BePart = () => {
   return (
-    <section className="relative bg-white py-32 md:py-20 overflow-y-visible mt-40">
+    <section className="relative bg-white py-32 md:py-20 overflow-y-visible mt-20 md:mt-40 -mb-20">
       {/* Content */}
       <div className="container mx-auto px-4 text-center">
         {/* Heading */}

@@ -49,7 +49,6 @@ function EventsPage() {
       setError('');
       setFetchFailed(false);
     } catch (err) {
-      console.error('Fetch events error:', err.response?.data || err.message);
       if (!isRetry) {
         setTimeout(() => fetchEvents(true), 2000);
       } else {

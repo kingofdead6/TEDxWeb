@@ -76,7 +76,7 @@ const OurPartners = () => {
   };
 
   return (
-    <section className="relative py-20 overflow-hidden mt-20">
+    <section className="relative py-20 overflow-hidden -mt-20">
       {/* Heading */}
       <motion.div
         variants={{

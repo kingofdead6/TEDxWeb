@@ -54,10 +54,8 @@ function RegistrationsPage() {
         `${API_BASE_URL}/events/registrations?${query.toString()}`,
         { headers }
       );
-      console.log("Registrations data after fetch:", registrationsRes.data); // Debug log
       setRegistrations(registrationsRes.data || []);
     } catch (err) {
-      console.error("Error fetching registrations:", err); // Debug log
       const message = err.response?.data?.message || "Failed to load registrations";
       setError(message);
       toast.error(message, {
@@ -228,8 +226,6 @@ function RegistrationsPage() {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
 
-      console.log("CSV upload response:", res.data); // Debug log
-
       const { processedRows, skippedRows, newAttendees, newRegistrations } = res.data;
 
       setSuccess(`CSV processed: ${newRegistrations} new registrations, ${newAttendees} new attendees, ${skippedRows} rows skipped`);
@@ -252,7 +248,6 @@ function RegistrationsPage() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       const message = err.response?.data?.message || "Failed to upload CSV";
-      console.error("CSV upload error:", err); // Debug log
       setError(message);
       setSuccess("");
       toast.error(message, {

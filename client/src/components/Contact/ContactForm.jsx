@@ -48,7 +48,8 @@ export default function Contact() {
     preferredContact: "",
     hearAboutUs: "",
     otherReason: "",
-    otherHearAboutUs: ""
+    otherHear: "", // Changed from otherHearAboutUs to otherHear
+    isSeen: false
   });
   const [formStatus, setFormStatus] = useState({ message: "", type: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,8 +97,6 @@ export default function Contact() {
       return;
     }
 
-    // Log form data for debugging
-    console.log('Submitting form data:', formData);
 
     try {
       const response = await fetch(`${API_BASE_URL}/contacts`, {
@@ -122,14 +121,13 @@ export default function Contact() {
           preferredContact: "",
           hearAboutUs: "",
           otherReason: "",
-          otherHearAboutUs: ""
+          otherHear: "", // Changed from otherHearAboutUs to otherHear
+          isSeen: false
         });
       } else {
-        console.error('Backend error:', result);
         setFormStatus({ message: result.error || "Failed to submit inquiry. Please try again.", type: "error" });
       }
     } catch (error) {
-      console.error('Fetch error:', error.message);
       setFormStatus({ message: "An error occurred. Please check your connection and try again.", type: "error" });
     } finally {
       setIsSubmitting(false);
@@ -159,17 +157,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-20 sm:mt-40 mb-20">
-      <div className="justify-center bg-white text-center relative px-4 mb-12 sm:mb-20" dir="ltr">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block mb-8 sm:mb-16 px-4 sm:px-6 py-1 sm:py-2 rounded-full bg-[#D9D9D9] shadow-sm"
-        >
-          <h2 className="text-lg sm:text-xl font-semibold text-[#DE8F5A]">Contact</h2>
-        </motion.div>
-      </div>
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-20 sm:mt-20 mb-20">
       
       <motion.div
         className="max-w-7xl mx-auto"
@@ -297,7 +285,7 @@ export default function Contact() {
                   <span className="text-red-500">*</span>
                 </label>
                 {contactConfig.formFields.reason.options.map((option) => (
-                  <div key={option} className="flex items-center mb-2 ">
+                  <div key={option} className="flex items-center mb-2">
                     <input
                       type="radio"
                       id={`reason-${option}`}
@@ -305,10 +293,10 @@ export default function Contact() {
                       value={option}
                       checked={formData.reason === option}
                       onChange={handleRadioChange}
-                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer "
+                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer"
                       required
                     />
-                    <label htmlFor={`reason-${option}`} className="text-black ">
+                    <label htmlFor={`reason-${option}`} className="text-black">
                       {option}
                     </label>
                   </div>
@@ -340,7 +328,7 @@ export default function Contact() {
                       value={option}
                       checked={formData.preferredContact === option}
                       onChange={handleRadioChange}
-                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer "
+                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer"
                       required
                     />
                     <label htmlFor={`preferred-${option}`} className="text-black">
@@ -357,7 +345,7 @@ export default function Contact() {
                   <span className="text-red-500">*</span>
                 </label>
                 {contactConfig.formFields.hearAboutUs.options.map((option) => (
-                  <div key={option} className="flex items-center mb-2 ">
+                  <div key={option} className="flex items-center mb-2">
                     <input
                       type="radio"
                       id={`hear-${option}`}
@@ -365,7 +353,7 @@ export default function Contact() {
                       value={option}
                       checked={formData.hearAboutUs === option}
                       onChange={handleRadioChange}
-                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer "
+                      className="mr-2 focus:outline-none accent-red-500 cursor-pointer"
                       required
                     />
                     <label htmlFor={`hear-${option}`} className="text-black">
@@ -376,8 +364,8 @@ export default function Contact() {
                 {formData.hearAboutUs === "Other" && (
                   <input
                     type="text"
-                    name="otherHearAboutUs"
-                    value={formData.otherHearAboutUs}
+                    name="otherHear" // Changed from otherHearAboutUs to otherHear
+                    value={formData.otherHear}
                     onChange={handleChange}
                     className="w-full p-2 sm:p-3 border border-gray-300 rounded bg-white placeholder-[#8D8D8D] font-bold focus:outline-none focus:ring-1 focus:ring-red-500 focus:border-transparent mt-2"
                     placeholder="Please specify"

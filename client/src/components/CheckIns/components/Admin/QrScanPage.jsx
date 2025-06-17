@@ -12,6 +12,7 @@ function QrScanPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(true);
   const [registrationId, setRegistrationId] = useState(null);
+  const [confirmedRegistrations, setConfirmedRegistrations] = useState(new Set());
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
 
@@ -29,7 +30,6 @@ function QrScanPage() {
 
       if (isScanning) {
         scannerRef.current.start().catch((err) => {
-          console.error('Scanner start error:', err);
           toast.error('Failed to start scanner. Please check camera permissions.', {
             style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
           });
@@ -55,7 +55,6 @@ function QrScanPage() {
     if (scannerRef.current) {
       if (isScanning) {
         scannerRef.current.start().catch((err) => {
-          console.error('Scanner start error:', err);
           toast.error('Failed to start scanner. Please check camera permissions.', {
             style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
           });
@@ -77,8 +76,6 @@ function QrScanPage() {
     setIsLoading(true);
     setIsScanning(false);
 
-    console.log('Scanned QR code data:', data); // Debug log
-
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -92,9 +89,14 @@ function QrScanPage() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log('Validation response:', response.data); // Debug log
 
       const { valid, checkedIn, message, attendee, registrationId } = response.data;
+
+      if (valid && checkedIn && confirmedRegistrations.has(registrationId)) {
+        setIsLoading(false);
+        setIsScanning(true);
+        return;
+      }
 
       if (!valid) {
         setScanResult({ valid: false, message });
@@ -113,7 +115,6 @@ function QrScanPage() {
       }
     } catch (err) {
       const message = err.response?.data?.message || err.message || 'Error validating QR code';
-      console.error('Validation error:', err.response?.data || err); // Debug log
       setScanResult({ valid: false, message });
       toast.error(message, {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
@@ -146,18 +147,14 @@ function QrScanPage() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log('Confirm check-in response:', response.data); // Debug log
 
-      const { valid, checkedIn, message, attendee } = response.data;
+      const { valid, checkedIn } = response.data;
 
       if (valid && checkedIn) {
-        setScanResult({
-          valid: true,
-          checkedIn: true,
-          message: 'Attendee checked in successfully',
-          attendee,
-        });
-        setRegistrationId(null);
+        setConfirmedRegistrations((prev) => new Set(prev).add(registrationId));
+        setScanResult(null); // Close popup
+        setRegistrationId(null); // Clear registration ID
+        setIsScanning(true); // Resume scanning
         toast.success('Check-in confirmed', {
           style: {
             background: '#10B981',
@@ -169,7 +166,6 @@ function QrScanPage() {
       }
     } catch (err) {
       const message = err.response?.data?.message || err.message || 'Error confirming check-in';
-      console.error('Confirm check-in error:', err.response?.data || err); // Debug log
       toast.error(message, {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
       });

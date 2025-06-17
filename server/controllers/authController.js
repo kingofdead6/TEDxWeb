@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 // Helper function to generate JWT token// In authController.js
 const generateToken = (user) => {
-  console.log('JWT_SECRET in generateToken:', process.env.JWT_SECRET || 'secret_key');
   return jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET || 'secret_key',
@@ -70,7 +69,6 @@ export const register = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Registration error:', err);
     res.status(500).json({ message: 'Server error during registration' });
   }
 };
@@ -111,7 +109,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Login error:', err);
     res.status(500).json({ message: 'Server error during login' });
   }
 };
@@ -132,7 +129,6 @@ export const getProfile = async (req, res) => {
       roleInTeam: user.roleInTeam,
     });
   } catch (err) {
-    console.error('Get profile error:', err);
     res.status(500).json({ message: 'Server error while fetching profile' });
   }
 };

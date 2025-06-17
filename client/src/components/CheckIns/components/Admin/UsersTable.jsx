@@ -16,7 +16,6 @@ function UserTable() {
   const [currentUserId, setCurrentUserId] = useState(null);
   const modalRef = useRef(null);
 
-  // Fetch current user's profile to get their ID
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -26,7 +25,6 @@ function UserTable() {
         });
         setCurrentUserId(res.data.id);
       } catch (err) {
-        console.error('Fetch profile error:', err.response?.data || err.message);
         setError('Failed to fetch user profile');
       } finally {
         setLoading(false);
@@ -46,7 +44,6 @@ function UserTable() {
         setUsers(res.data);
         setFilteredUsers(res.data);
       } catch (err) {
-        console.error('Fetch users error:', err.response?.data || err.message);
         setError(err.response?.data?.message || 'Failed to fetch users');
       } finally {
         setLoading(false);
@@ -84,7 +81,6 @@ function UserTable() {
       setTimeout(() => setSuccess(''), 3000);
       setShowDeleteModal(false);
     } catch (err) {
-      console.error('Delete user error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Failed to delete user');
       setSuccess('');
       setShowDeleteModal(false);

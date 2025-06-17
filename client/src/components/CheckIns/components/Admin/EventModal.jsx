@@ -114,7 +114,6 @@ const EventModal = ({ event, isOpen, onClose, userRole, onUpdate }) => {
             });
           }
         } catch (err) {
-          console.error("Fetch error:", err);
           setFormError("Failed to fetch data. Please check your network or database connection.");
           toast.error(
             err.response?.data?.message || "Failed to fetch data. Please try again later.",
@@ -227,7 +226,6 @@ const EventModal = ({ event, isOpen, onClose, userRole, onUpdate }) => {
       setPicturePreview(response.data.picture || null);
       setGalleryPreviews(response.data.gallery || []);
     } catch (err) {
-      console.error("Update event error:", err);
       const errorMessage = err.response?.data?.message || "Failed to update event";
       setFormError(errorMessage);
       toast.error(errorMessage, {
@@ -267,7 +265,6 @@ const EventModal = ({ event, isOpen, onClose, userRole, onUpdate }) => {
       onClose();
       onUpdate(null);
     } catch (err) {
-      console.error("Delete event error:", err);
       const errorMessage = err.response?.data?.message || "Failed to delete event";
       setFormError(errorMessage);
       toast.error(errorMessage, {

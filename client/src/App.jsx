@@ -32,6 +32,7 @@ import EventDetailsPage from "./components/Events/EventDetailsPage";
 import AdminAddEventPage from "./components/CheckIns/pages/Admin/AdminAddEventPage";
 import AdminRegistraionPage from "./components/CheckIns/pages/Admin/AdminRegistraionPage";
 import QrScanPage from "./components/CheckIns/components/Admin/QrScanPage";
+import AdminNewsLetterPage from "./components/CheckIns/pages/Admin/AdminNewsLetterPage";
 
 // Layout component for routes with NavBar
 function MainLayout() {
@@ -79,6 +80,7 @@ function App() {
         <Route path="/checkins/admin/participants/view" element={<AdminViewParticipants />} />
         <Route path="/checkins/admin/contacts" element={<AdminViewContactMessages />} />
         <Route path="/checkins/admin/events/add" element={<AdminAddEventPage />} />
+        <Route path="/checkins/admin/newsletter" element={<AdminNewsLetterPage />} />
         <Route path="/events/:id" element={<EventDetailsPage />} />
         <Route path="/checkins/events/:eventId/registrations" element={<AdminRegistraionPage />} />
         <Route path="/events/:eventId/scan" element={<QrScanPage />} />

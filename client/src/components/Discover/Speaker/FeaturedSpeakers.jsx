@@ -78,7 +78,7 @@ const FeaturedSpeakers = () => {
   };
 
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-20 overflow-hidden -mt-20">
       <style>
         {`
           .no-scrollbar::-webkit-scrollbar {

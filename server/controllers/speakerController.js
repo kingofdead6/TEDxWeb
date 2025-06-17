@@ -58,7 +58,6 @@ export const createSpeaker = async (req, res) => {
 
     res.status(201).json({ message: 'Speaker created successfully', speaker });
   } catch (error) {
-    console.error('Error creating speaker:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -69,7 +68,6 @@ export const getSpeakers = async (req, res) => {
     const speakers = await prisma.speaker.findMany();
     res.status(200).json(speakers);
   } catch (error) {
-    console.error('Error fetching speakers:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -82,7 +80,6 @@ export const getVisibleSpeakers = async (req, res) => {
     });
     res.status(200).json(speakers);
   } catch (error) {
-    console.error('Error fetching visible speakers:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -105,7 +102,6 @@ export const updateSpeakerVisibility = async (req, res) => {
 
     res.status(200).json({ message: 'Speaker visibility updated', speaker: updatedSpeaker });
   } catch (error) {
-    console.error('Error updating speaker visibility:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -128,7 +124,6 @@ export const deleteSpeaker = async (req, res) => {
     await prisma.speaker.delete({ where: { id } });
     res.status(200).json({ message: 'Speaker deleted successfully' });
   } catch (error) {
-    console.error('Error deleting speaker:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -198,7 +193,6 @@ export const exportSpeakers = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('Export speakers error:', error);
     res.status(500).json({ error: 'Failed to export speakers', details: error.message });
   }
 };

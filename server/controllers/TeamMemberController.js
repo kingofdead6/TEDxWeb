@@ -156,7 +156,6 @@ export const exportTeamMembers = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to export team members' });
   }
 };

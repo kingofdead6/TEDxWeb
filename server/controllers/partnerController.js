@@ -53,7 +53,6 @@ export const createPartner = async (req, res) => {
 
     res.status(201).json({ message: 'Partner created successfully', partner });
   } catch (error) {
-    console.error('Error creating partner:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -64,7 +63,6 @@ export const getPartners = async (req, res) => {
     const partners = await prisma.partner.findMany();
     res.status(200).json(partners);
   } catch (error) {
-    console.error('Error fetching partners:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -77,7 +75,6 @@ export const getVisiblePartners = async (req, res) => {
     });
     res.status(200).json(partners);
   } catch (error) {
-    console.error('Error fetching visible partners:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -100,7 +97,6 @@ export const updatePartnerVisibility = async (req, res) => {
 
     res.status(200).json({ message: 'Partner visibility updated', partner: updatedPartner });
   } catch (error) {
-    console.error('Error updating partner visibility:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -123,7 +119,6 @@ export const deletePartner = async (req, res) => {
     await prisma.partner.delete({ where: { id } });
     res.status(200).json({ message: 'Partner deleted successfully' });
   } catch (error) {
-    console.error('Error deleting partner:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -183,7 +178,6 @@ export const exportPartners = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to export partners' });
   }
 };

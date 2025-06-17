@@ -268,7 +268,6 @@ function ViewParticipants() {
     });
     setShowDownloadDropdown(false);
   } catch (err) {
-    console.error('Export error:', err);
     toast.error(err.response?.data?.error || 'Failed to export data', {
       style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
     });

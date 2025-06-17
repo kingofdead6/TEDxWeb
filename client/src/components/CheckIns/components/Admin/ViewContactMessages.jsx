@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../../api';
-import { FiTrash2, FiX, FiSearch, FiArrowUp, FiArrowDown } from 'react-icons/fi';
+import { FiTrash2, FiX, FiSearch, FiArrowUp, FiArrowDown, FiEye, FiEyeOff, FiDownload } from 'react-icons/fi';
 import toast, { Toaster } from 'react-hot-toast';
 
 function ViewContactMessages() {
@@ -11,7 +11,7 @@ function ViewContactMessages() {
   const [selectedContact, setSelectedContact] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
+  const [sortOrder, setSortOrder] = useState('desc');
   const [user, setUser] = useState(null);
 
   // Fetch user
@@ -69,6 +69,58 @@ function ViewContactMessages() {
     }
   };
 
+  // Handle mark as seen/unseen
+  const handleToggleSeen = async (id, currentStatus) => {
+    try {
+      const res = await axios.patch(
+        `${API_BASE_URL}/contacts/${id}/seen`,
+        { isSeen: !currentStatus },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      setContacts(contacts.map((c) => (c.id === id ? { ...c, isSeen: !currentStatus } : c)));
+      if (selectedContact?.id === id) setSelectedContact({ ...selectedContact, isSeen: !currentStatus });
+      toast.success(`Message marked as ${!currentStatus ? 'seen' : 'unseen'}`, {
+        style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to update message status', {
+        style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
+      });
+    }
+  };
+
+  // Handle Excel download
+  const handleDownloadExcel = async () => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/contacts/export`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          responseType: 'blob', // Important for handling binary data
+        }
+      );
+
+      // Create a blob URL and trigger download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'contact_messages.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Contacts exported successfully', {
+        style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
+      });
+    } catch (err) {
+      toast.error('Failed to export contacts', {
+        style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
+      });
+    }
+  };
+
   // Filter and sort contacts
   const filteredContacts = contacts
     .filter(
@@ -98,14 +150,24 @@ function ViewContactMessages() {
       >
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-4xl font-extrabold text-red-600">Contact Messages</h2>
-          <button
-            onClick={toggleSortOrder}
-            className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
-            aria-label={`Sort ${sortOrder === 'desc' ? 'oldest first' : 'newest first'}`}
-          >
-            {sortOrder === 'desc' ? <FiArrowDown className="w-5 h-5" /> : <FiArrowUp className="w-5 h-5" />}
-            <span>{sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}</span>
-          </button>
+          <div className="flex space-x-4">
+            <button
+              onClick={toggleSortOrder}
+              className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
+              aria-label={`Sort ${sortOrder === 'desc' ? 'oldest first' : 'newest first'}`}
+            >
+              {sortOrder === 'desc' ? <FiArrowDown className="w-5 h-5" /> : <FiArrowUp className="w-5 h-5" />}
+              <span>{sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}</span>
+            </button>
+            <button
+              onClick={handleDownloadExcel}
+              className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
+              aria-label="Download contacts as Excel"
+            >
+              <FiDownload className="w-5 h-5" />
+              <span>Download Excel</span>
+            </button>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -142,7 +204,9 @@ function ViewContactMessages() {
             {filteredContacts.map((contact) => (
               <motion.div
                 key={contact.id}
-                className="bg-white rounded-xl shadow-md p-5 hover:shadow-xl border border-red-100 cursor-pointer transition-all duration-300"
+                className={`rounded-xl shadow-md p-5 hover:shadow-xl border cursor-pointer transition-all duration-300 ${
+                  contact.isSeen ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'
+                }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
@@ -154,16 +218,30 @@ function ViewContactMessages() {
                     <p className="text-sm text-gray-600">{contact.email}</p>
                     <p className="text-sm text-gray-600">{new Date(contact.createdAt).toLocaleDateString()}</p>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(contact.id);
-                    }}
-                    className="text-red-600 hover:text-red-800 cursor-pointer"
-                    aria-label={`Delete message from ${contact.fullName}`}
-                  >
-                    <FiTrash2 className="w-5 h-5" />
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleSeen(contact.id, contact.isSeen);
+                      }}
+                      className={`cursor-pointer p-2 rounded-full ${
+                        contact.isSeen ? 'text-green-600 hover:text-green-800' : 'text-red-600 hover:text-red-800'
+                      }`}
+                      aria-label={`Mark message as ${contact.isSeen ? 'unseen' : 'seen'}`}
+                    >
+                      {contact.isSeen ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(contact.id);
+                      }}
+                      className="text-red-600 hover:text-red-800 cursor-pointer"
+                      aria-label={`Delete message from ${contact.fullName}`}
+                    >
+                      <FiTrash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="mt-2 text-sm text-gray-700 line-clamp-2">{contact.message}</p>
               </motion.div>
@@ -194,7 +272,7 @@ function ViewContactMessages() {
                 <h3 className="text-2xl font-bold text-red-600">{selectedContact.fullName}</h3>
                 <button
                   onClick={() => setSelectedContact(null)}
-                  className="text-gray-500 hover:text-red-600 cursor-pointer "
+                  className="text-gray-500 hover:text-red-600 cursor-pointer"
                   aria-label="Close popup"
                 >
                   <FiX className="w-6 h-6" />
@@ -211,12 +289,22 @@ function ViewContactMessages() {
                 <p><span className="font-semibold text-red-600">Message:</span> {selectedContact.message}</p>
                 <p><span className="font-semibold text-red-600">Preferred Contact:</span> {selectedContact.preferredContact}</p>
                 <p><span className="font-semibold text-red-600">Heard About Us:</span> {selectedContact.hearAboutUs}</p>
-                {selectedContact.otherHearAboutUs && (
-                  <p><span className="font-semibold text-red-600">Other Source:</span> {selectedContact.otherHearAboutUs}</p>
+                {selectedContact.otherHear && (
+                  <p><span className="font-semibold text-red-600">Other Source:</span> {selectedContact.otherHear}</p>
                 )}
                 <p><span className="font-semibold text-red-600">Submitted:</span> {new Date(selectedContact.createdAt).toLocaleString()}</p>
+                <p><span className="font-semibold text-red-600">Status:</span> {selectedContact.isSeen ? 'Seen' : 'Unseen'}</p>
               </div>
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end space-x-4">
+                <button
+                  onClick={() => handleToggleSeen(selectedContact.id, selectedContact.isSeen)}
+                  className={`cursor-pointer px-4 py-2 ${
+                    selectedContact.isSeen ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                  } text-white rounded-lg transition duration-200 flex items-center space-x-2`}
+                >
+                  {selectedContact.isSeen ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  <span>Mark as {selectedContact.isSeen ? 'Unseen' : 'Seen'}</span>
+                </button>
                 <button
                   onClick={() => handleDelete(selectedContact.id)}
                   className="cursor-pointer px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200 flex items-center space-x-2"

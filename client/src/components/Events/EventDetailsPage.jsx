@@ -34,7 +34,6 @@ function EventDetailsPage() {
         });
         setUser(res.data);
       } catch (err) {
-        console.error('Fetch user error:', err);
         setError('Failed to fetch user profile');
       }
     };
@@ -62,7 +61,6 @@ function EventDetailsPage() {
       });
       setError('');
     } catch (err) {
-      console.error('Fetch event error:', err);
       setError(err.response?.data?.message || 'Failed to fetch event');
     } finally {
       setIsLoading(false);
@@ -88,7 +86,6 @@ function EventDetailsPage() {
         setSpeakers(speakersRes.data.map((s) => ({ value: s.id, label: s.fullName })));
         setPartners(partnersRes.data.map((p) => ({ value: p.id, label: p.organizationName })));
       } catch (err) {
-        console.error('Fetch speakers/partners error:', err);
         setError('Failed to load speakers or partners');
       }
     };
@@ -193,7 +190,6 @@ function EventDetailsPage() {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e0e0e0' },
       });
     } catch (err) {
-      console.error('Update event error:', err);
       const errorMessage = err.response?.data?.message || 'Failed to update event';
       setError(errorMessage);
       toast.error(errorMessage, {
@@ -229,7 +225,6 @@ function EventDetailsPage() {
         fileInputRef.current.value = '';
       }
     } catch (err) {
-      console.error('Gallery upload error:', err);
       const errorMessage = err.response?.data?.message || 'Failed to upload images';
       setError(errorMessage);
       toast.error(errorMessage, {

@@ -33,7 +33,6 @@ const UpcomingEvents = () => {
         setEvents(upcomingEvents);
         setLoading(false);
       } catch (err) {
-        console.error("Fetch events error:", err);
         setError("Failed to load events. Please try again later.");
         toast.error("Failed to load upcoming events.", {
           style: {
@@ -63,7 +62,7 @@ const UpcomingEvents = () => {
   };
 
   return (
-    <section className="relative bg-white py-20 overflow-hidden">
+    <section className="relative bg-white py-10 overflow-hidden">
       <Toaster position="top-center" />
       {/* Custom Scrollbar Styles */}
       <style>
@@ -91,17 +90,6 @@ const UpcomingEvents = () => {
           className="absolute top-70 -left-35 w-1/3 h-full bg-no-repeat bg-left bg-contain md:block"
           style={{ backgroundImage: `url(${RedX})` }}
         />
-      </div>
-
-      <div className="justify-center bg-white text-center relative px-4" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block mb-30 px-6 py-2 rounded-full bg-[#D9D9D9] shadow-sm"
-        >
-          <h2 className="text-xl font-semibold text-[#DE8F5A]">Upcoming Events</h2>
-        </motion.div>
       </div>
 
       {/* Main Content */}

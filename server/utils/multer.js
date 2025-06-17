@@ -1,7 +1,6 @@
-// backend/middleware/multer.js
 import multer from 'multer';
 
-const storage = multer.memoryStorage(); // Store files in memory for Cloudinary upload
+const storage = multer.memoryStorage(); 
 const upload = multer({ storage });
 
 export default upload;

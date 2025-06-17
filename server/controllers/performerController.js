@@ -48,7 +48,6 @@ export const createPerformer = async (req, res) => {
 
     res.status(201).json({ message: 'Performer created successfully', performer });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -105,7 +104,6 @@ export const exportPerformers = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to export performers' });
   }
 };
@@ -123,7 +121,6 @@ export const updatePerformerVisibility = async (req, res) => {
 
     res.json({ message: 'Visibility updated', performer });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to update visibility' });
   }
 };
@@ -134,7 +131,6 @@ export const getAllPerformers = async (req, res) => {
     const performers = await prisma.performer.findMany();
     res.json(performers);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to fetch performers' });
   }
 };

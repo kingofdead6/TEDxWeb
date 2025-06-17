@@ -102,7 +102,6 @@ export const createAttendeeAndRegistration = async (req, res) => {
       registration,
     });
   } catch (error) {
-    console.error('Error creating attendee and registration:', error);
     res.status(500).json({ error: 'Server error' });
   } finally {
     await prisma.$disconnect();
@@ -180,7 +179,6 @@ export const createRegistration = async (req, res) => {
 
     res.status(201).json({ message: 'Registration created successfully', registration });
   } catch (error) {
-    console.error('Error creating registration:', error);
     res.status(500).json({ error: 'Server error' });
   } finally {
     await prisma.$disconnect();
@@ -246,7 +244,6 @@ export const sendEmailsToSelected = async (req, res) => {
 
     res.json({ message: `Emails sent to ${registrations.length} attendees` });
   } catch (error) {
-    console.error('Error sending emails:', error);
     res.status(500).json({ error: 'Server error' });
   } finally {
     await prisma.$disconnect();

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,7 +18,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 function Statistics() {
@@ -53,11 +53,6 @@ function Statistics() {
         });
         setStats(statsRes.data);
         setFilteredEvents(statsRes.data.eventStats);
-        console.log('Fetched stats:', {
-          genderStats: statsRes.data.genderStats,
-          howHeardStats: statsRes.data.howHeardStats,
-          totalRegisteredUsers: statsRes.data.totalRegisteredUsers,
-        }); // Debug log
 
         // Fetch users
         const usersRes = await axios.get(`${API_BASE_URL}/admin/users`, {
@@ -65,13 +60,8 @@ function Statistics() {
         });
         setUsers(usersRes.data);
         setFilteredUsers(usersRes.data);
-        console.log('Fetched users:', usersRes.data.slice(0, 3).map(u => ({
-          email: u.email,
-          attendee: u.attendee ? { gender: u.attendee.gender, howHeard: u.attendee.howHeard } : null,
-        }))); // Debug log
       } catch (err) {
         setError('Failed to fetch data');
-        console.error('Fetch error:', err); // Debug log
       }
     };
     fetchData();
@@ -104,14 +94,6 @@ function Statistics() {
     setSelectedEvent(null);
   };
 
-  const openUserModal = (user) => {
-    setSelectedUser(user);
-    setShowUserModal(true);
-    console.log('Opening user modal for:', {
-      email: user.email,
-      attendee: user.attendee ? { gender: user.attendee.gender, howHeard: user.attendee.howHeard } : null,
-    }); // Debug log
-  };
 
   const closeUserModal = () => {
     setShowUserModal(false);
@@ -150,12 +132,7 @@ function Statistics() {
     e.preventDefault();
   };
 
-  const handleUserSearch = (e) => {
-    e.preventDefault();
-  };
-
   const clearSearch = () => setSearchTerm('');
-  const clearUserSearch = () => setUserSearchTerm('');
 
   // Max values for circular progress bars
   const MAX_USERS = 1000;

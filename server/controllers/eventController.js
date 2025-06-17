@@ -484,7 +484,6 @@ export const getRegistrations = async (req, res) => {
       where.checkedIn = true;
     }
 
-    console.log('getRegistrations query:', { eventId, search, status, where }); // Debug log
 
     const registrations = await prisma.registration.findMany({
       where,
@@ -527,7 +526,6 @@ export const getRegistrations = async (req, res) => {
       },
     }));
 
-    console.log('getRegistrations result count:', formattedRegistrations.length); // Debug log
 
     res.json(formattedRegistrations);
   } catch (error) {
@@ -594,7 +592,6 @@ export const uploadRegistrations = async (req, res) => {
       return res.status(400).json({ error: 'Event ID and CSV file are required' });
     }
 
-    console.log('Raw CSV buffer:', fileBuffer.toString('utf-8').slice(0, 200)); // Debug log (first 200 chars)
 
     const event = await prisma.event.findUnique({ where: { id: eventId } });
     if (!event) {
@@ -614,7 +611,6 @@ export const uploadRegistrations = async (req, res) => {
         results.push(row);
       })
       .on('end', async () => {
-        console.log('CSV rows parsed:', results.length); // Debug log
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -625,16 +621,13 @@ export const uploadRegistrations = async (req, res) => {
           const email = row.email || row.EMAIL;
           const phoneNumber = row.phonenumber || row.phone_number || row.phone || row['PHONE NUMBER'] || row.PHONENUMBER;
 
-          console.log('Normalized CSV row:', { fullName, email, phoneNumber }); // Debug log
 
           if (!fullName || !email || !phoneNumber) {
-            console.log('Skipping row due to missing fields:', row); // Debug log
             skippedRows++;
             continue;
           }
 
           if (!emailRegex.test(email)) {
-            console.log('Skipping row due to invalid email:', row); // Debug log
             skippedRows++;
             continue;
           }
@@ -655,7 +648,6 @@ export const uploadRegistrations = async (req, res) => {
               },
             });
             newAttendees++;
-            console.log('Created new attendee:', attendee.id); // Debug log
           }
 
           const existingRegistration = await prisma.registration.findFirst({
@@ -672,19 +664,11 @@ export const uploadRegistrations = async (req, res) => {
               },
             });
             newRegistrations++;
-            console.log('Created new registration:', registration.id); // Debug log
           } else {
-            console.log('Registration already exists for attendee:', attendee.id); // Debug log
             skippedRows++;
           }
         }
 
-        console.log('CSV upload summary:', {
-          processedRows,
-          skippedRows,
-          newAttendees,
-          newRegistrations,
-        }); // Debug log
 
         res.json({
           message: 'Registrations processed successfully',

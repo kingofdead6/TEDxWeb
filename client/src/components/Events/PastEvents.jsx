@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { FaCalendar, FaMapMarkerAlt } from "react-icons/fa";
 import BlackX from "/BlackX.png";
 import axios from "axios";
@@ -13,7 +12,7 @@ const PastEvents = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const today = new Date(); // Use current date
+  const today = new Date();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -22,7 +21,6 @@ const PastEvents = () => {
         const response = await axios.get(`${API_BASE_URL}/events`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // Filter past events (date < today)
         const pastEvents = response.data.filter(
           (event) => new Date(event.date) < today
         );
@@ -54,8 +52,9 @@ const PastEvents = () => {
   };
 
   return (
-    <section className="relative bg-white py-20 overflow-hidden">
+    <section className="relative bg-white py-12 sm:py-16 md:py-20 overflow-hidden">
       <Toaster position="top-center" />
+      {/* Background Image - Hidden on Mobile, Unchanged on Desktop */}
       <div className="absolute inset-0 z-1 hidden md:block">
         <motion.div
           initial={{ rotate: 45, opacity: 0 }}
@@ -65,88 +64,80 @@ const PastEvents = () => {
           style={{ backgroundImage: `url(${BlackX})` }}
         />
       </div>
-
-      <div className="justify-center text-center relative px-4 py-20" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block mb-10 px-6 py-2 rounded-full bg-[#D9D9D9] shadow-sm"
-        >
-          <h2 className="text-xl font-semibold text-[#DE8F5A]">Past Events</h2>
-        </motion.div>
+      <div className="text-5xl sm:text-6xl md:text-8xl font-extrabold text-center mb-12 sm:mb-16 md:mb-20">
+        <h1>Past Events</h1>
       </div>
-
-      <div className="container mx-auto px-4 relative z-20 flex flex-col-reverse md:flex-row">
+      <div className="container mx-auto px-4 sm:px-6 relative z-20">
         {loading ? (
-          <p className="text-center text-gray-600 w-full">Loading events...</p>
+          <p className="text-center text-gray-600 text-base sm:text-lg">Loading events...</p>
         ) : error ? (
-          <p className="text-center text-red-600 w-full">{error}</p>
+          <p className="text-center text-red-600 text-base sm:text-lg">{error}</p>
         ) : events.length === 0 ? (
-          <p className="text-center text-gray-600 w-full">No past events found.</p>
+          <p className="text-center text-gray-600 text-base sm:text-lg">No past events found.</p>
         ) : (
-          <>
-            <div className="w-full md:w-1/2 p-4">
-              {events.map((event, index) => (
-                <motion.div
-                  key={`${event.id}-${index}`}
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.4, type: "spring", stiffness: 50, damping: 10 }}
-                  className="mb-10"
-                >
+          <div className="flex flex-col gap-8 sm:gap-12">
+            {events.map((event, index) => (
+              <motion.div
+                key={`${event.id}-${index}`}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, delay: index * 0.2, type: "spring", stiffness: 50, damping: 10 }}
+                className="flex flex-col sm:flex-row gap-4 sm:gap-6 bg-white rounded-lg shadow-md hover:shadow-lg shadow-red-500 transition-shadow duration-300"
+              >
+                {/* Event Image */}
+                <div className="w-full sm:w-1/2">
                   <div
                     onClick={() => openModal(event)}
-                    className="block relative overflow-hidden rounded-lg shadow-sm hover:shadow-xl transition-shadow duration-500 w-full md:w-xl md:ml-20 cursor-pointer"
+                    className="block relative overflow-hidden rounded-lg cursor-pointer touch-action-manipulation"
+                    role="button"
+                    aria-label={`View details for ${event.title}`}
                   >
                     <img
                       src={event.picture || "/placeholder.jpg"}
+                      srcSet={`${event.picture || "/placeholder.jpg"} 1x, ${
+                        event.picture || "/placeholder.jpg"
+                      } 2x`}
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 80vw, 50vw"
                       alt={event.title}
-                      className="w-full h-60 md:h-80 object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-64 sm:h-56 md:h-[400px] object-cover transition-transform duration-500 hover:scale-105"
+                      loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500 flex flex-col justify-end">
-                      <div className="relative z-10 text-white p-4">
-                        <h3 className="text-2xl md:text-4xl font-extrabold text-white max-w-md ml-4 mb-2">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black to-transparent opacity-70 hover:opacity-90 transition-opacity duration-500 flex flex-col justify-end">
+                      <div className="relative z-10 text-white p-3 sm:p-4">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white max-w-xs sm:max-w-sm">
                           "{event.theme || "Inspiring Ideas"}"
                         </h3>
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
+                </div>
 
-            <div className="w-full md:w-1/2 pt-3 md:-ml-10 mb-8 flex flex-col justify-between">
-              {events.map((event, index) => (
-                <motion.div
-                  key={`${event.id}-${index}-desc`}
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 50, damping: 10 }}
-                  className="flex flex-col space-y-4 mb-8"
-                >
-                  <h2 className="text-3xl md:text-5xl font-extrabold text-black">{event.title}</h2>
-                  <p className="text-base md:text-xl font-medium text-black max-w-lg mb-4">
-                    {event.description || "No description available."}
-                  </p>
-                  <div className="flex flex-col space-y-2">
-                    <p className="text-md font-bold flex items-center gap-1 mb-4">
-                      <FaCalendar className="w-5 h-5 text-[#EB0028] mr-2" />{" "}
-                      {new Date(event.date).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
+                {/* Event Details */}
+                <div className="w-full sm:w-1/2 p-4 sm:p-6 flex flex-col justify-between">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-black">{event.title}</h2>
+                    <p className="text-sm sm:text-base md:text-lg font-medium text-black max-w-full sm:max-w-lg">
+                      {event.description || "No description available."}
                     </p>
-                    <p className="text-md font-bold flex items-center gap-1">
-                      <FaMapMarkerAlt className="w-5 h-5 text-[#EB0028] mr-2" /> {event.location}
-                    </p>
+                    <div className="flex flex-col space-y-1 sm:space-y-2">
+                      <p className="text-sm sm:text-md font-bold flex items-center gap-1">
+                        <FaCalendar className="w-4 h-4 sm:w-5 sm:h-5 text-[#EB0028] mr-2" />
+                        {new Date(event.date).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </p>
+                      <p className="text-sm sm:text-md font-bold flex items-center gap-1">
+                        <FaMapMarkerAlt className="w-4 h-4 sm:w-5 sm:h-5 text-[#EB0028] mr-2" />
+                        {event.location}
+                      </p>
+                    </div>
                   </div>
-                </motion.div>
-              ))}
-         
-            </div>
-          </>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         )}
       </div>
 

@@ -213,6 +213,15 @@ function Navbar() {
                       </motion.div>
                       <motion.div variants={linkVariants} whileHover="hover">
                         <Link
+                          to="/checkins/admin/newsletter"
+                          className="block bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
+                          onClick={toggleSidebar}
+                        >
+                          Newsletter
+                        </Link>
+                      </motion.div>
+                      <motion.div variants={linkVariants} whileHover="hover">
+                        <Link
                           to="/checkins/register"
                           className="block bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-200 text-center"
                           onClick={toggleSidebar}

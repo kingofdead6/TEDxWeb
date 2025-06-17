@@ -17,14 +17,6 @@ const ContactUs = () => {
            ></motion.div>
         </div>
         <div className="justify-center bg-white text-center relative px-4 mb-10" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block mb-16 px-6 py-2 rounded-full bg-[#D9D9D9] shadow-sm"
-        >
-          <h2 className="text-xl font-semibold text-[#DE8F5A]">Talk with us</h2>
-        </motion.div>
       </div>
           {/* Content */}
           <div className="container mx-auto px-4 text-center ">

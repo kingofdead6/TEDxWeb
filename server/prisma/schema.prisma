@@ -197,6 +197,7 @@ model Contact {
     preferredContact    String
     hearAboutUs         String
     otherHear           String?
+    isSeen              Boolean     @default(false)
     createdAt           DateTime    @default(now())
     updatedAt           DateTime    @updatedAt
 }
@@ -228,4 +229,13 @@ model TeamMember {
   isVisibleOnMainPage Boolean @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model Newsletter {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

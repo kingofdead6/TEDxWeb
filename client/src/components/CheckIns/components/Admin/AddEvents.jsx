@@ -81,7 +81,6 @@ function AddEvents() {
           });
         }
       } catch (err) {
-        console.error('Fetch error:', err);
         setError('Failed to fetch data. Please check your network or database connection.');
         toast.error(
           err.response?.data?.message ||
@@ -219,7 +218,6 @@ function AddEvents() {
       setGalleryPreviews([]);
       
     } catch (err) {
-      console.error('Submit error:', err);
       const errorMessage = err.response?.data?.message || 'Failed to add event';
       toast.error(errorMessage, {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },

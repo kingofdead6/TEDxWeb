@@ -19,8 +19,7 @@ export const getUsers = async (req, res) => {
       orderBy: { name: 'asc' },
     });
 
-    console.log('Fetched users count:', users.length); // Debug log
-    console.log('Sample user emails:', users.slice(0, 3).map(u => u.email)); // Debug log
+
 
     // Fetch associated Attendee data for each user
     const usersWithAttendees = await Promise.all(
@@ -52,14 +51,12 @@ export const getUsers = async (req, res) => {
             updatedAt: true,
           },
         });
-        console.log(`Attendee for user ${user.email}:`, !!attendee, attendee ? { gender: attendee.gender, howHeard: attendee.howHeard } : 'None'); // Debug log
         return { ...user, attendee };
       })
     );
 
     res.json(usersWithAttendees);
   } catch (err) {
-    console.error('Error fetching users:', err);
     res.status(500).json({ message: 'Server error' });
   } finally {
     await prisma.$disconnect();
@@ -82,7 +79,6 @@ export const deleteUser = async (req, res) => {
     if (err.code === 'P2025') {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.error('Error deleting user:', err);
     res.status(500).json({ message: 'Server error' });
   } finally {
     await prisma.$disconnect();
@@ -193,8 +189,6 @@ export const getStatistics = async (req, res) => {
       count: stat.count,
     }));
 
-    console.log('Statistics:', { totalUsers, totalEvents, totalRegisteredUsers, formattedGenderStats, formattedHowHeardStats }); // Debug log
-
     res.json({
       totalUsers,
       totalEvents,
@@ -205,7 +199,6 @@ export const getStatistics = async (req, res) => {
       ageStats: formattedAgeStats,
     });
   } catch (err) {
-    console.error('Error fetching statistics:', err);
     res.status(500).json({ message: 'Server error' });
   } finally {
     await prisma.$disconnect();

@@ -38,7 +38,6 @@ export const createPress = async (req, res) => {
 
     res.status(201).json({ message: 'Press entry created successfully', press });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -95,7 +94,6 @@ export const exportPress = async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to export press' });
   }
 };
@@ -113,7 +111,6 @@ export const updatePressVisibility = async (req, res) => {
 
     res.json({ message: 'Visibility updated', press });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to update visibility' });
   }
 };
@@ -123,7 +120,6 @@ export const getAllPress = async (req, res) => {
     const press = await prisma.press.findMany();
     res.json(press);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to fetch press' });
   }
 };

@@ -31,7 +31,6 @@ export const getAttendees = async (req, res) => {
     }));
     res.json(formattedAttendees);
   } catch (err) {
-    console.error('Error in getAttendees:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -115,7 +114,6 @@ export const uploadAttendees = async (req, res) => {
     );
     res.json({ message: 'Attendees uploaded successfully', count: attendees.length });
   } catch (err) {
-    console.error('Error in uploadAttendees:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -170,7 +168,6 @@ export const validateQRCode = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error('Error in validateQRCode:', err);
     res.status(500).json({ valid: false, message: 'Server error' });
   }
 };
