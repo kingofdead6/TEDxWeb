@@ -24,7 +24,6 @@ function Navbar() {
         });
         setUser(res.data);
       } catch (err) {
-        console.error('Navbar fetch user error:', err.response?.data);
         setUser(null);
         localStorage.removeItem('token');
         navigate('/');
@@ -84,7 +83,7 @@ function Navbar() {
               to="/checkins"
               className="bg-transparent border-2 border-[#e62b1e] rounded-xl px-4 py-2 hover:bg-[#e62b1e] hover:text-white transition-colors duration-300 font-semibold"
             >
-              TEDx Check-ins
+              Dashboard
             </Link>
           </motion.div>
 

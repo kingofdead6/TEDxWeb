@@ -82,7 +82,7 @@ function LoginForm() {
           className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6 text-[#d20000]"
           variants={formVariants}
         >
-          Login to TEDx Check-ins
+          Login to the main dashboard
         </motion.h2>
         {error && (
           <motion.p 

@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../../../../api.js';
 const formConfig = {
   title: "Speaker Nomination Form",
   subtitle: "Please fill out the form carefully. Our team spends significant effort reviewing every nomination and will contact shortlisted candidates.",
-  contactEmail: "contact@tedxuniversityofalgiers.com",
+  contactEmail: "contact@tedxuoalgiers.com ",
   submitButton: {
     text: "Submit Your Nomination"
   },

@@ -40,6 +40,8 @@ function MainLayout() {
     <>
       <NavBar />
       <Outlet />
+      <Footer />
+
     </>
   );
 }
@@ -85,7 +87,6 @@ function App() {
         <Route path="/checkins/events/:eventId/registrations" element={<AdminRegistraionPage />} />
         <Route path="/events/:eventId/scan" element={<QrScanPage />} />
       </Routes>
-      <Footer />
     </Router>
   );
 }

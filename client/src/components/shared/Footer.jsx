@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaArrowRight, FaInstagram, FaLinkedin, FaYoutube, FaFacebook } from 'react-icons/fa';
+import { FaArrowRight, FaInstagram, FaLinkedin, FaYoutube, FaFacebook, FaTiktok } from 'react-icons/fa';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { API_BASE_URL } from '../../../api';
@@ -76,14 +76,14 @@ const Footer = () => {
       />
 
       <div className="relative z-10 container mx-auto">
-        <div className="flex flex-col md:flex-row justify-around items-center gap-20 mb-8 mt-20">
+        <div className="flex flex-col md:flex-row justify-around items-start gap-8 md:gap-12 mb-8 mt-20">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="text-left">
+            <div key={i} className="text-left w-full md:w-[30%] min-w-[200px]">
               <AnimatePresence mode="wait">
                 <motion.p
                   key={actionTexts[currentActionIndex][`action${i + 1}`]}
-                  className="text-3xl md:text-5xl font-extrabold border-t-4"
-                  variants={textVariants}
+                  className="text-2xl md:text-4xl font-extrabold border-t-6 rounded-2xl pl-4 mb-4 h-20 md:h-24 flex items-center"
+                  variants={textVariants} 
                   initial="initial"
                   animate="animate"
                   exit="exit"
@@ -91,7 +91,7 @@ const Footer = () => {
                   {actionTexts[currentActionIndex][`action${i + 1}`]}
                 </motion.p>
               </AnimatePresence>
-              <div className="group flex items-center space-x-2 cursor-pointer text-black font-bold text-xl md:text-3xl mt-6">
+              <div className="group flex items-center space-x-2 cursor-pointer text-black font-bold text-lg md:text-2xl pl-4">
                 <span>
                   {i === 0
                     ? 'NOMINATE A SPEAKER'
@@ -168,37 +168,37 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center mt-10 gap-6">
           <div className="text-left">
             <div className="flex space-x-4 mb-4">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                <FaInstagram className="text-3xl md:text-4xl text-white hover:text-pink-500 transition-colors duration-300" />
+              <a href="https://www.instagram.com/tedxalgiers" target="_blank" rel="noopener noreferrer">
+                <FaInstagram className="text-3xl md:text-4xl text-white hover:text-amber-500 transition-colors duration-300" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/company/ découvirem/tedxalgeria" target="_blank" rel="noopener noreferrer">
                 <FaLinkedin className="text-3xl md:text-4xl text-white hover:text-blue-700 transition-colors duration-300" />
               </a>
               <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
-                <FaYoutube className="text-3xl md:text-4xl text-white hover:text-red-600 transition-colors duration-300" />
+                <FaTiktok className="text-3xl md:text-4xl text-white hover:text-black transition-colors duration-300" />
               </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                 <FaFacebook className="text-3xl md:text-4xl text-white hover:text-blue-600 transition-colors duration-300" />
               </a>
             </div>
             <p className="text-base md:text-lg">Phone: +1-123-456-7890</p>
-            <p className="text-base md:text-lg">Email: info@tedxmiami.com</p>
+            <p className="text-base md:text-lg">Email: contact@tedxuoalgiers.com </p>
           </div>
 
-         <div className="flex flex-row flex-wrap md:flex-row gap-4 md:gap-8 text-left text-sm sm:text-base md:text-xl font-bold">
-           <div className="flex flex-col space-y-1">
-             <a href="/aboutus" className="hover:text-gray-300 hover:underline">About</a>
-           </div>
-           <div className="flex flex-col space-y-1">
-             <a href="/events" className="hover:text-gray-300 hover:underline">Events</a>
-             <a href="/contact" className="hover:text-gray-300 hover:underline">ContactUs</a>
-           </div>
-           <div className="flex flex-col space-y-1">
-             <a href="/get-involved" className="hover:text-gray-300 hover:underline">Volunteers</a>
-             <a href="/discover-speakers" className="hover:text-gray-300 hover:underline">Speakers</a>
-             <a href="/discover-partners" className="hover:text-gray-300 hover:underline">Partners</a>
-           </div>
-         </div>
+          <div className="flex flex-row flex-wrap md:flex-row gap-4 md:gap-8 text-left text-sm sm:text-base md:text-xl font-bold">
+            <div className="flex flex-col space-y-1">
+              <a href="/aboutus" className="hover:text-gray-300 hover:underline">About</a>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <a href="/events" className="hover:text-gray-300 hover:underline">Events</a>
+              <a href="/contact" className="hover:text-gray-300 hover:underline">ContactUs</a>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <a href="/get-involved" className="hover:text-gray-300 hover:underline">Volunteers</a>
+              <a href="/discover-speakers" className="hover:text-gray-300 hover:underline">Speakers</a>
+              <a href="/discover-partners" className="hover:text-gray-300 hover:underline">Partners</a>
+            </div>
+          </div>
         </div>
 
         <div className="border border-white rounded-full mt-10" />

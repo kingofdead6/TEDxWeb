@@ -79,7 +79,7 @@ function ViewContactMessages() {
       );
       setContacts(contacts.map((c) => (c.id === id ? { ...c, isSeen: !currentStatus } : c)));
       if (selectedContact?.id === id) setSelectedContact({ ...selectedContact, isSeen: !currentStatus });
-      toast.success(`Message marked as ${!currentStatus ? 'seen' : 'unseen'}`, {
+      toast.success(`Message marked as ${!currentStatus ? 'Responded' : 'Not Responded'}`, {
         style: { background: '#fff', color: '#1a1a1a', borderRadius: '8px', border: '1px solid #e5e7eb' },
       });
     } catch (err) {
@@ -150,24 +150,26 @@ function ViewContactMessages() {
       >
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-4xl font-extrabold text-red-600">Contact Messages</h2>
-          <div className="flex space-x-4">
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0 w-full sm:w-auto">
             <button
               onClick={toggleSortOrder}
-              className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
+              className="w-full sm:w-auto cursor-pointer flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200"
               aria-label={`Sort ${sortOrder === 'desc' ? 'oldest first' : 'newest first'}`}
             >
               {sortOrder === 'desc' ? <FiArrowDown className="w-5 h-5" /> : <FiArrowUp className="w-5 h-5" />}
               <span>{sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}</span>
             </button>
+          
             <button
               onClick={handleDownloadExcel}
-              className="cursor-pointer flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
+              className="w-full sm:w-auto cursor-pointer flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200"
               aria-label="Download contacts as Excel"
             >
               <FiDownload className="w-5 h-5" />
               <span>Download Excel</span>
             </button>
           </div>
+
         </div>
 
         {/* Search Bar */}
@@ -293,17 +295,17 @@ function ViewContactMessages() {
                   <p><span className="font-semibold text-red-600">Other Source:</span> {selectedContact.otherHear}</p>
                 )}
                 <p><span className="font-semibold text-red-600">Submitted:</span> {new Date(selectedContact.createdAt).toLocaleString()}</p>
-                <p><span className="font-semibold text-red-600">Status:</span> {selectedContact.isSeen ? 'Seen' : 'Unseen'}</p>
+                <p><span className="font-semibold text-red-600">Status:</span> {selectedContact.isSeen ? 'Responded' : 'Not Responded'}</p>
               </div>
               <div className="mt-6 flex justify-end space-x-4">
                 <button
                   onClick={() => handleToggleSeen(selectedContact.id, selectedContact.isSeen)}
                   className={`cursor-pointer px-4 py-2 ${
-                    selectedContact.isSeen ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                    selectedContact.isSeen ? 'bg-red-600 hover:bg-red-700':'bg-green-600 hover:bg-green-700' 
                   } text-white rounded-lg transition duration-200 flex items-center space-x-2`}
                 >
                   {selectedContact.isSeen ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
-                  <span>Mark as {selectedContact.isSeen ? 'Unseen' : 'Seen'}</span>
+                  <span>Mark as {selectedContact.isSeen ? 'Not Responded' : 'Responded'}</span>
                 </button>
                 <button
                   onClick={() => handleDelete(selectedContact.id)}

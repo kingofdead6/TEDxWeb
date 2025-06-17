@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaInstagram, FaFacebook, FaLinkedin, FaYoutube } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaLinkedin, FaYoutube, FaTiktok } from "react-icons/fa";
 import { Phone, Mail } from 'lucide-react';
 import { API_BASE_URL } from '../../../api.js';
 
@@ -10,16 +10,16 @@ const contactConfig = {
   subtitle: "We look forward to connecting with you!",
   contactInfo: {
     phone: "+213 XX XXX XXXX",
-    email: "contact@tedxalgeria.com",
+    email: "contact@tedxuoalgiers.com",
     website: "www.tedxalgeria.com"
   },
   socialMedia: {
     title: "Follow us on:",
     links: [
-      { icon: <FaInstagram size={24} />, url: "#" },
+      { icon: <FaInstagram size={24} />, url: "https://www.instagram.com/tedxalgiers" },
       { icon: <FaFacebook size={24} />, url: "#" },
-      { icon: <FaLinkedin size={24} />, url: "#" },
-      { icon: <FaYoutube size={24} />, url: "#" }
+      { icon: <FaLinkedin size={24} />, url: "https://www.linkedin.com/company/tedxalgeria" },
+      { icon: <FaTiktok size={24} />, url: "#" }
     ]
   },
   formFields: {

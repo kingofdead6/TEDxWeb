@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../../../../api.js';
 const formConfig = {
   title: "Partnership Application Form",
   subtitle: "Please complete this form with as much detail as possible. Our team will review applications and select partners based on alignment with our vision and values.",
-  contactEmail: "contact@tedxuniversityofalgiers.com",
+  contactEmail: "contact@tedxuoalgiers.com",
   submitButton: {
     text: "Submit Your Application"
   },

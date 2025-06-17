@@ -146,11 +146,11 @@ const WaysToJoinUs = () => {
         >
           <p className="mb-2"> Have a unique way to contribute? Get in touch!</p>
           <a
-            href="mailto:contact@tedxuniversityofalgiers.com"
+            href="mailto:contact@tedxuoalgiers.com "
             className="text-[#DE8F5A] hover:text-[#F97316] transition-colors duration-200"
             aria-label="Email contact at TEDx University of Algiers"
           >
-            🔴 contact@tedxuniversityofalgiers.com
+            🔴 contact@tedxuoalgiers.com 
           </a>
         </motion.div>
       </div>

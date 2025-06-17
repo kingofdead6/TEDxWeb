@@ -6,7 +6,7 @@ import { API_BASE_URL } from '../../../../api.js';
 const formConfig = {
   title: "Volunteer Application Form",
   subtitle: "Please fill out the form carefully. We will contact selected applicants via email.",
-  contactEmail: "contact@tedxuniversityofalgiers.com",
+  contactEmail: "contact@tedxuoalgiers.com",
   submitButton: {
     text: "Submit"
   },

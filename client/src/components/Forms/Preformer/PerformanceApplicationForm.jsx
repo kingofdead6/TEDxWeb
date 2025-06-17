@@ -7,7 +7,7 @@ import { API_BASE_URL } from '../../../../api.js';
 const formConfig = {
   title: "Performance Application Form",
   subtitle: "Please complete this form with as much detail as possible. Our team will review applications and select performers based on creativity, originality, and high quality performances.",
-  contactEmail: "contact@tedxuniversityofalgiers.com",
+  contactEmail: "contact@tedxuoalgiers.com ",
   submitButton: {
     text: "Submit"
   },

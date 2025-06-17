@@ -10,7 +10,7 @@ import { API_BASE_URL } from "../../../../api";
 const formConfig = {
   title: "TEDx Registration Form",
   subtitle: "Join our TEDx community by completing the form below. We’re excited to have you at our upcoming event!",
-  contactEmail: "contact@tedxalgeria.com",
+  contactEmail: "contact@tedxuoalgiers.com ",
   submitButton: {
     text: "Submit Registration",
     submittingText: "Submitting...",
