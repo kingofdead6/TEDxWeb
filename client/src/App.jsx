@@ -33,6 +33,8 @@ import AdminAddEventPage from "./components/CheckIns/pages/Admin/AdminAddEventPa
 import AdminRegistraionPage from "./components/CheckIns/pages/Admin/AdminRegistraionPage";
 import QrScanPage from "./components/CheckIns/components/Admin/QrScanPage";
 import AdminNewsLetterPage from "./components/CheckIns/pages/Admin/AdminNewsLetterPage";
+import SuccessPage from "./components/Forms/Reserve/SuccessPage";
+import FailurePage from "./components/Forms/Reserve/FailurePage";
 
 // Layout component for routes with NavBar
 function MainLayout() {
@@ -65,6 +67,8 @@ function App() {
           <Route path="speaker-form" element={<Speaker />} />
           <Route path="partner-form" element={<Partner />} />
           <Route path="/events/:eventId/register" element={<Reserve />} />
+          <Route path="/registration/success" element={<SuccessPage />} />
+          <Route path="/registration/failed" element={<FailurePage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         {/* Check-ins routes without NavBar */}

@@ -1,47 +1,54 @@
-import React from 'react'
-// eslint-disable-next-line no-unused-vars
-import { motion } from "framer-motion";
-import BlackX from "/BlackX.png";
+import React from 'react';
+import { motion } from 'framer-motion';
+import BackgroundImage from '../../assets/contact.png'; 
 
 const ContactUs = () => {
-    return (
-        <section className="mt-0 sm:mt-20 relative bg-white py-32 md:py-20 overflow-y-visible">
-          {/* Dotted Pattern Background */}
-        <div className="absolute inset-0 min-w-6xl z-1">
-           <motion.div
-             initial={{ rotate: 45, opacity: 0 }}
-             animate={{ rotate: 20, opacity: 1 }}
-             transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10 }}
-             className="absolute -bottom-80 -left-50 w-1/4 h-full bg-no-repeat bg-left bg-contain md:block"
-             style={{ backgroundImage: `url(${BlackX})` }}
-           ></motion.div>
-        </div>
-        <div className="justify-center bg-white text-center relative px-4 mb-10" dir="rtl">
+  return (
+    <section className="relative h-screen overflow-visible mt-0 sm:mt-20" dir="rtl">
+      {/* Background Image with Overlay */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url(${BackgroundImage})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" /> {/* Subtle dark overlay */}
       </div>
-          {/* Content */}
-          <div className="container mx-auto px-4 text-center ">
-            {/* Heading */}
-            <motion.h1
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10 }}
-              className="text-7xl sm:text-8xl md:text-8xl font-extrabold text-black mb-6"
-            >
-                Contact Us
-            </motion.h1>
-    
-            {/* Description */}
-            <motion.p
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 50, damping: 10 }}
-              className="text-2xl sm:text-4xl md:text-4xl font-normal text-black max-w-7xl mx-auto"
-            >
-                 We’d love to hear from you! Whether you have questions, suggestions, or partnership inquiries, our team is here to assist you. Please fill out the form below, and we’ll get back to you as soon as possible.              
-            </motion.p>
-          </div>
-        </section>
-      );
-}
+      <div className="absolute inset-0 backdrop-blur-xs" style={{ backgroundImage: "linear-gradient(to top, #EB0028C9 -50%, transparent 100%)" }} />
 
-export default ContactUs
+      {/* Content */}
+      <div className="container mx-auto px-4 text-center h-full flex flex-col justify-center md:mt-14 relative z-20">
+        {/* Heading */}
+        <motion.h1
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="text-6xl sm:text-5xl md:text-[80px] font-extrabold mb-4 mt-30 md:mt-0 md:mb-6 leading-tight text-white"
+        >
+          <span>Contact </span>
+          <span
+            style={{
+              background: "linear-gradient(90deg, #F4D58D 26.01%, #DE8F5A 45.24%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Us
+          </span>
+        </motion.h1>
+
+        {/* Description */}
+        <motion.p
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="text-2xl sm:text-2xl md:text-[36px] font-light text-white/90 max-w-6xl mx-auto mb-6 md:mb-8 px-4"
+        >
+          We’d love to hear from you! Whether you have questions, suggestions, or partnership inquiries, our team is here to assist you. Please fill out the form below, and we’ll get back to you as soon as possible.
+        </motion.p>
+      </div>
+    </section>
+  );
+};
+
+export default ContactUs;

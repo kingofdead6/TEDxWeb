@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -6,6 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../api'; // Adjust path as needed
+import BackgroundImage from '../../../assets/partners/valuedBg.JPG'; // Adjust path to your background image
 
 const OurPartners = () => {
   const sliderRef = useRef(null);
@@ -76,7 +76,23 @@ const OurPartners = () => {
   };
 
   return (
-    <section className="relative py-20 overflow-hidden -mt-20">
+    <section className="relative py-20 overflow-hidden mt-20">
+      {/* Background Image with Overlay */}
+      <div
+        className={`
+          absolute inset-0 bg-no-repeat rounded-4xl
+          bg-[length:130%] bg-[position:0px_0px]
+          sm:bg-[length:100%] sm:bg-[position:0px_-150px]
+        `}
+        style={{
+          backgroundImage: `url(${BackgroundImage})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50 rounded-4xl" />
+      </div>
+
+
+
       {/* Heading */}
       <motion.div
         variants={{
@@ -85,9 +101,9 @@ const OurPartners = () => {
         }}
         initial="hidden"
         animate="visible"
-        className="text-center relative px-4 mb-16"
+        className="text-center relative px-4 mb-16 z-10"
       >
-        <h2 className="text-5xl sm:text-6xl md:text-6xl font-extrabold text-black">
+        <h2 className="text-5xl sm:text-6xl md:text-6xl font-extrabold text-white">
           Our Valued Partners
         </h2>
       </motion.div>
@@ -96,24 +112,24 @@ const OurPartners = () => {
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="relative max-w-full mx-auto"
+        className="relative max-w-full mx-auto z-10"
       >
-        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/50 to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/50 to-transparent pointer-events-none" />
 
         {loading ? (
           <div className="flex justify-center items-center h-32">
-            <svg className="animate-spin h-8 w-8 text-red-600" viewBox="0 0 24 24">
+            <svg className="animate-spin h-8 w-8 text-white" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           </div>
         ) : error ? (
-          <div className="text-center text-red-600 text-xl font-semibold">
+          <div className="text-center text-red-300 text-xl font-semibold">
             {error}
           </div>
         ) : partners.length === 0 ? (
-          <div className="text-center text-gray-600 text-xl font-semibold">
+          <div className="text-center text-gray-400 text-xl font-semibold">
             No partners available
           </div>
         ) : (
@@ -144,7 +160,7 @@ const OurPartners = () => {
                       </div>
                     )}
                   </div>
-                  <p className="text-xl font-semibold text-black text-center">
+                  <p className="text-xl font-semibold text-white text-center">
                     {partner.organizationName}
                   </p>
                 </div>

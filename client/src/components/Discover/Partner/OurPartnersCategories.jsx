@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import brain from '/icons/brain.png';
 import bag from '/icons/bag.png';
@@ -55,11 +54,11 @@ const OurPartnersCategories = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: category.id * 0.1 }}
           >
-            <div className="w-16 h-16 rounded-full bg-transparent flex items-center justify-center group-hover:bg-white transition-colors duration-300 mr-4">
+            <div className="rounded-full bg-transparent flex items-center justify-center group-hover:bg-white transition-colors duration-300 mr-4">
               <img
                 src={category.icon}
                 alt={category.title}
-                className="w-16 h-16 rounded-full"
+                className="w-32 h-16 rounded-full md:w-20"
               />
             </div>
             <div>

@@ -130,18 +130,7 @@ export default function PressMediaAccreditationForm() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 mt-20 sm:mt-40 mb-20">
-      <div className="justify-center bg-white text-center relative px-4 mb-12 sm:mb-20" dir="ltr">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block mb-8 sm:mb-16 px-4 sm:px-6 py-1 sm:py-2 rounded-full bg-[#D9D9D9] shadow-sm"
-        >
-          <h2 className="text-lg sm:text-xl font-semibold text-[#DE8F5A]">Apply Now</h2>
-        </motion.div>
-      </div>
-      
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 mb-20">   
       <motion.div
         className="max-w-3xl mx-auto"
         initial="hidden"

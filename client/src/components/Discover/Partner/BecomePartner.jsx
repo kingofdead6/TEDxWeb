@@ -12,10 +12,10 @@ const BecomePartner = () => {
 
   return (
     <section
-      className="my-40 relative w-full h-[800px] bg-cover bg-center text-white"
+      className="my-40 relative w-full h-[800px] bg-cover bg-center text-white "
       style={{ backgroundImage: `url(${handshake})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#EB0028C9] via-[#EB002884] to-transparent backdrop-blur-md"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#EB0028C9] via-[#EB002884] to-transparent backdrop-blur-md "></div>
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
         <motion.h1
           initial={{ y: 50, opacity: 0 }}

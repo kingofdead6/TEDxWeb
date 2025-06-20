@@ -4,7 +4,7 @@ import BlackX from '/BlackX.png';
 
 const MediaShowCase = () => {
   return (
-    <section className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-hidden">
+    <section className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-hidden mt-10">
       {/* Dotted Pattern Background */}
       <div className="absolute inset-0 z-0">
         <motion.div
@@ -14,20 +14,6 @@ const MediaShowCase = () => {
           className="absolute bottom-0 left-0 w-1/3 md:w-1/4 h-full bg-no-repeat bg-left-bottom bg-contain hidden md:block"
           style={{ backgroundImage: `url(${BlackX})` }}
         />
-      </div>
-
-      {/* Header Badge */}
-      <div className="relative z-10 text-center px-4 mb-12" dir="rtl">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-block px-6 py-3 rounded-full bg-[#D9D9D9]/80 backdrop-blur-sm shadow-md"
-        >
-          <h2 className="text-lg sm:text-xl font-semibold text-[#DE8F5A]">
-            Join as Press/Media for our events
-          </h2>
-        </motion.div>
       </div>
 
       {/* Content */}

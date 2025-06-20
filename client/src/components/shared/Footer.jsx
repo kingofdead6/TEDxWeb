@@ -4,6 +4,7 @@ import { FaArrowRight, FaInstagram, FaLinkedin, FaYoutube, FaFacebook, FaTiktok 
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { API_BASE_URL } from '../../../api';
+import { Link } from 'react-router-dom'; // Replace with 'a' tag if not using React Router
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -64,7 +65,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-red-500 text-white text-center py-10 px-6 md:px-20 overflow-hidden rounded-t-[100px]">
+    <footer className="relative bg-[#EB0028] text-white text-center py-10 px-6 md:px-20 overflow-hidden rounded-t-[100px]">
       <Toaster />
       <motion.div
         className="hidden md:block absolute inset-0 bg-black/50"
@@ -92,13 +93,24 @@ const Footer = () => {
                 </motion.p>
               </AnimatePresence>
               <div className="group flex items-center space-x-2 cursor-pointer text-black font-bold text-lg md:text-2xl pl-4">
-                <span>
-                  {i === 0
-                    ? 'NOMINATE A SPEAKER'
-                    : i === 1
-                    ? 'BECOME A VOLUNTEER'
-                    : 'PARTNER WITH US'}
-                </span>
+                <Link
+                  to={
+                    i === 0
+                      ? '/speaker-form'
+                      : i === 1
+                      ? '/get-involved'
+                      : '/partner-form'
+                  }
+                  className="hover:text-gray-700 transition-colors"
+                >
+                  <span>
+                    {i === 0
+                      ? 'NOMINATE A SPEAKER'
+                      : i === 1
+                      ? 'BECOME A VOLUNTEER'
+                      : 'PARTNER WITH US'}
+                  </span>
+                </Link>
                 <motion.div
                   className="transform transition-transform duration-300 group-hover:translate-x-2"
                   whileHover={{ scale: 1.2 }}
@@ -173,15 +185,8 @@ const Footer = () => {
               </a>
               <a href="https://www.linkedin.com/company/ découvirem/tedxalgeria" target="_blank" rel="noopener noreferrer">
                 <FaLinkedin className="text-3xl md:text-4xl text-white hover:text-blue-700 transition-colors duration-300" />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
-                <FaTiktok className="text-3xl md:text-4xl text-white hover:text-black transition-colors duration-300" />
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <FaFacebook className="text-3xl md:text-4xl text-white hover:text-blue-600 transition-colors duration-300" />
-              </a>
+              </a>        
             </div>
-            <p className="text-base md:text-lg">Phone: +1-123-456-7890</p>
             <p className="text-base md:text-lg">Email: contact@tedxuoalgiers.com </p>
           </div>
 

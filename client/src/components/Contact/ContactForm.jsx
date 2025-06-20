@@ -9,7 +9,6 @@ const contactConfig = {
   title: "Get in Touch",
   subtitle: "We look forward to connecting with you!",
   contactInfo: {
-    phone: "+213 XX XXX XXXX",
     email: "contact@tedxuoalgiers.com",
     website: "www.tedxalgeria.com"
   },
@@ -17,9 +16,7 @@ const contactConfig = {
     title: "Follow us on:",
     links: [
       { icon: <FaInstagram size={24} />, url: "https://www.instagram.com/tedxalgiers" },
-      { icon: <FaFacebook size={24} />, url: "#" },
       { icon: <FaLinkedin size={24} />, url: "https://www.linkedin.com/company/tedxalgeria" },
-      { icon: <FaTiktok size={24} />, url: "#" }
     ]
   },
   formFields: {
@@ -48,7 +45,7 @@ export default function Contact() {
     preferredContact: "",
     hearAboutUs: "",
     otherReason: "",
-    otherHear: "", // Changed from otherHearAboutUs to otherHear
+    otherHear: "", 
     isSeen: false
   });
   const [formStatus, setFormStatus] = useState({ message: "", type: "" });
@@ -121,7 +118,7 @@ export default function Contact() {
           preferredContact: "",
           hearAboutUs: "",
           otherReason: "",
-          otherHear: "", // Changed from otherHearAboutUs to otherHear
+          otherHear: "", 
           isSeen: false
         });
       } else {
@@ -183,14 +180,7 @@ export default function Contact() {
 
             <div className="space-y-4">
               {/* Phone */}
-              <div className="flex items-center space-x-4">
-                <div className="bg-red-600 p-2 sm:p-3 rounded-full">
-                  <Phone className="text-white w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <p className="text-black font-semibold text-base sm:text-lg">
-                  {contactConfig.contactInfo.phone}
-                </p>
-              </div>
+             
               {/* Email */}
               <div className="flex items-center space-x-4">
                 <div className="bg-red-600 p-2 sm:p-3 rounded-full">

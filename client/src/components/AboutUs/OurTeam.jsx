@@ -50,7 +50,7 @@ const OurTeam = () => {
   };
 
   return (
-    <section className="relative py-20 text-black min-h-screen">
+    <section className="relative py-20 text-black min-h-screen mb-0 sm:-mb-100">
       <style>
         {`
           .no-scrollbar::-webkit-scrollbar {

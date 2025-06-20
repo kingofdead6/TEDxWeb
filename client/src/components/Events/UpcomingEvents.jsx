@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import RedX from "/RedX.png";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import axios from "axios";
 import { API_BASE_URL } from "../../../api";
@@ -81,17 +80,6 @@ const UpcomingEvents = () => {
           }
         `}
       </style>
-
-      <div className="absolute inset-0 min-w-6xl z-1">
-        <motion.div
-          initial={{ rotate: 45, opacity: 0 }}
-          animate={{ rotate: -15, opacity: 1 }}
-          transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10 }}
-          className="absolute top-70 -left-35 w-1/3 h-full bg-no-repeat bg-left bg-contain md:block"
-          style={{ backgroundImage: `url(${RedX})` }}
-        />
-      </div>
-
       {/* Main Content */}
       <div className="container mx-auto px-4 relative z-20 flex flex-col md:flex-row">
         <div className="w-full px-4 mb-8 md:w-2xl md:pr-15 md:-mr-10 md:ml-10 md:mb-0">

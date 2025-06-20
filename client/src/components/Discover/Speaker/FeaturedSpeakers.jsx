@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Instagram, Linkedin, Globe, X } from 'lucide-react';
 import axios from 'axios';
 import { API_BASE_URL } from '../../../../api';
+import BackgroundImage from '../../../assets/speakers/Speakers.png'
 
 const FeaturedSpeakers = () => {
   const sliderRef = useRef(null);
@@ -78,7 +79,21 @@ const FeaturedSpeakers = () => {
   };
 
   return (
-    <section className="relative py-20 overflow-hidden -mt-20">
+    <section className="relative py-20 overflow-hidden mt-20 -mb-20">
+      {/* Background Image with Overlay */}
+      <div
+       className={`
+         absolute inset-0 bg-no-repeat rounded-4xl
+         bg-[length:150%] bg-[position:-90px_0px]
+         sm:bg-[length:100%] sm:bg-[position:0px_-200px]
+       `}
+       style={{
+         backgroundImage: `url(${BackgroundImage})`,
+       }}
+     >
+       <div className="absolute inset-0 bg-black/10 rounded-4xl" />
+     </div>
+
       <style>
         {`
           .no-scrollbar::-webkit-scrollbar {
@@ -96,34 +111,34 @@ const FeaturedSpeakers = () => {
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, type: 'spring', stiffness: 50, damping: 10 }}
-        className="text-5xl sm:text-6xl md:text-6xl font-extrabold text-black mb-20 text-center"
+        className="text-5xl sm:text-6xl md:text-6xl font-extrabold text-white mb-20 text-center relative z-10"
       >
         Featured Speakers:
       </motion.h1>
 
       {/* Speakers Carousel */}
       <div
-        className="relative max-w-full mx-auto"
+        className="relative max-w-full mx-auto z-10"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Fade Gradient Overlays */}
-        <div className="absolute inset-y-0 left-0 w-30 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-30 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/50 to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/50 to-transparent pointer-events-none" />
 
         {loading ? (
           <div className="flex justify-center items-center h-32">
-            <svg className="animate-spin h-8 w-8 text-red-600" viewBox="0 0 24 24">
+            <svg className="animate-spin h-8 w-8 text-white" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           </div>
         ) : error ? (
-          <div className="text-center text-red-600 text-xl font-semibold">
+          <div className="text-center text-red-300 text-xl font-semibold">
             {error}
           </div>
         ) : speakers.length === 0 ? (
-          <div className="text-center text-gray-600 text-xl font-semibold">
+          <div className="text-center text-gray-400 text-xl font-semibold">
             No featured speakers available
           </div>
         ) : (
@@ -146,22 +161,22 @@ const FeaturedSpeakers = () => {
                     />
                   </div>
                   <div className="mt-4 text-center">
-                    <p className="text-lg font-semibold text-black">{speaker.fullName}</p>
-                    <p className="text-md text-gray-600">{speaker.occupation}</p>
+                    <p className="text-lg font-semibold text-white">{speaker.fullName}</p>
+                    <p className="text-md text-gray-300">{speaker.occupation}</p>
                     <div className="mt-2 flex space-x-4 justify-center">
                       {speaker.instagram && (
                         <a href={speaker.instagram} target="_blank" rel="noopener noreferrer">
-                          <Instagram className="w-5 h-5 text-gray-600 hover:text-red-600 transition-colors duration-200" />
+                          <Instagram className="w-5 h-5 text-gray-300 hover:text-red-300 transition-colors duration-200" />
                         </a>
                       )}
                       {speaker.linkedin && (
                         <a href={speaker.linkedin} target="_blank" rel="noopener noreferrer">
-                          <Linkedin className="w-5 h-5 text-gray-600 hover:text-blue-600 transition-colors duration-200" />
+                          <Linkedin className="w-5 h-5 text-gray-300 hover:text-blue-300 transition-colors duration-200" />
                         </a>
                       )}
                       {speaker.website && (
                         <a href={speaker.website} target="_blank" rel="noopener noreferrer">
-                          <Globe className="w-5 h-5 text-gray-600 hover:text-green-600 transition-colors duration-200" />
+                          <Globe className="w-5 h-5 text-gray-300 hover:text-green-300 transition-colors duration-200" />
                         </a>
                       )}
                     </div>

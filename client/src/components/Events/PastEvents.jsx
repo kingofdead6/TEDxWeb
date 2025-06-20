@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaCalendar, FaMapMarkerAlt } from "react-icons/fa";
-import BlackX from "/BlackX.png";
 import axios from "axios";
 import { API_BASE_URL } from "../../../api";
 import toast, { Toaster } from "react-hot-toast";
@@ -54,16 +53,6 @@ const PastEvents = () => {
   return (
     <section className="relative bg-white py-12 sm:py-16 md:py-20 overflow-hidden">
       <Toaster position="top-center" />
-      {/* Background Image - Hidden on Mobile, Unchanged on Desktop */}
-      <div className="absolute inset-0 z-1 hidden md:block">
-        <motion.div
-          initial={{ rotate: 45, opacity: 0 }}
-          animate={{ rotate: 25, opacity: 1 }}
-          transition={{ duration: 0.8, type: "spring", stiffness: 50, damping: 10 }}
-          className="absolute top-50 left-75 w-1/3 h-full bg-no-repeat bg-left bg-contain"
-          style={{ backgroundImage: `url(${BlackX})` }}
-        />
-      </div>
       <div className="text-5xl sm:text-6xl md:text-8xl font-extrabold text-center mb-12 sm:mb-16 md:mb-20">
         <h1>Past Events</h1>
       </div>

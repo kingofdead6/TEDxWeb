@@ -4,7 +4,7 @@ import BlackX from '/BlackX.png';
 
 const PartnersShowCase = () => {
   return (
-    <section className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-hidden">
+    <section className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-auto mt-10">
       {/* Dotted Pattern Background */}
       <div className="absolute inset-0 z-0">
         <motion.div
