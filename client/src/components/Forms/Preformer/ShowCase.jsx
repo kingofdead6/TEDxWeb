@@ -1,20 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import BlackX from '/BlackX.png';
 
 const ShowCase = () => {
   return (
     <section className="relative bg-white py-16 sm:py-24 lg:py-32 overflow-hidden mt-10">
-      {/* Dotted Pattern Background */}
-      <div className="absolute inset-0 z-0">
-        <motion.div
-          initial={{ rotate: 45, opacity: 0 }}
-          animate={{ rotate: 20, opacity: 0.2 }}
-          transition={{ duration: 0.8, type: 'spring', stiffness: 50, damping: 10 }}
-          className="absolute bottom-0 left-0 w-1/3 md:w-1/4 h-full bg-no-repeat bg-left-bottom bg-contain hidden md:block"
-          style={{ backgroundImage: `url(${BlackX})` }}
-        />
-      </div>
+ 
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
